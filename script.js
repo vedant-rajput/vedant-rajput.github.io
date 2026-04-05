@@ -593,6 +593,31 @@ function initHighlightAnimation() {
 }
 
 // ========================================
+// DYNAMIC COUNTERS
+// ========================================
+function updateDynamicCounters() {
+    const statItems = document.querySelectorAll('.stat-item');
+    statItems.forEach(item => {
+        const labelElement = item.querySelector('.stat-label');
+        if (!labelElement) return;
+        
+        const label = labelElement.textContent.trim().toLowerCase();
+        
+        if (label.includes('certifications')) {
+            const count = document.querySelectorAll('.cert-list li').length;
+            item.setAttribute('data-count', count);
+        } else if (label.includes('projects')) {
+            const count = document.querySelectorAll('.project-card').length;
+            item.setAttribute('data-count', count);
+        } else if (label.includes('skills')) {
+            // Counting the tech logo wrappers for skills count
+            const count = document.querySelectorAll('.tech-logo-wrapper').length;
+            item.setAttribute('data-count', count);
+        }
+    });
+}
+
+// ========================================
 // INITIALIZATION
 // ========================================
 
