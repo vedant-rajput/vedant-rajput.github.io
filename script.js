@@ -575,7 +575,7 @@ function initSmoothScroll() {
 // ========================================
 // HIGHLIGHT TEXT ANIMATION
 // ========================================
-function initHighlightAnimation() {
+/* function initHighlightAnimation() {
     const highlight = document.getElementById('highlight-text');
     if (!highlight) return;
 
@@ -590,6 +590,61 @@ function initHighlightAnimation() {
             highlight.style.opacity = '1';
         }, 300);
     }, 4000);
+} */
+
+// ========================================
+// HIGHLIGHT TEXT ANIMATION
+// ========================================
+function initHighlightAnimation() {
+    const highlight = document.getElementById('highlight-text');
+    if (!highlight) return;
+
+    const words = ['Actionable Intelligence', 'Business Insights', 'Data Solutions', 'Strategic Decisions'];
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingDelay = 100;
+
+    // Set initial style for cursor effect
+    highlight.style.opacity = '1';
+    highlight.style.borderRight = '2px solid var(--accent-color)';
+    highlight.style.paddingRight = '2px';
+    highlight.textContent = ''; // clear initially
+
+    function typeWord() {
+        const currentWord = words[wordIndex];
+
+        if (isDeleting) {
+            highlight.textContent = currentWord.substring(0, charIndex - 1);
+            charIndex--;
+            typingDelay = 50; // faster delete
+        } else {
+            highlight.textContent = currentWord.substring(0, charIndex + 1);
+            charIndex++;
+            typingDelay = 100; // normal typing
+        }
+
+        if (!isDeleting && charIndex === currentWord.length) {
+            isDeleting = true;
+            typingDelay = 2000; // Pause at the end of word
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            wordIndex = (wordIndex + 1) % words.length;
+            typingDelay = 500; // Pause before typing new word
+        }
+
+        setTimeout(typeWord, typingDelay);
+    }
+
+    // Blinking cursor effect
+    setInterval(() => {
+        highlight.style.borderRightColor = highlight.style.borderRightColor === 'transparent'
+            ? 'var(--accent-color)'
+            : 'transparent';
+    }, 500);
+
+    // Initial start
+    setTimeout(typeWord, 1000);
 }
 
 // ========================================
