@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedant Rajput | Data Scientist Portfolio</title>
+    <meta name="description"
+        content="Vedant Rajput - Data Scientist Portfolio. Turning complex data into actionable intelligence.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-progress">
+        <div class="scroll-progress-bar"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <div class="logo logo-glitch" data-text="VR.">VR<span class="dot">.</span></div>
+                <div class="tagline-nav">Data Scientist</div>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#about" class="nav-link" data-text="About">About</a></li>
+                <li><a href="#skills" class="nav-link" data-text="Skills">Skills</a></li>
+                <li><a href="#experience" class="nav-link" data-text="Experience">Experience</a></li>
+                <li><a href="#projects" class="nav-link" data-text="Projects">Projects</a></li>
+                <li><a href="#contact" class="nav-link" data-text="Contact">Contact</a></li>
+            </ul>
+
+            <div class="nav-socials">
+                <a href="https://www.linkedin.com/in/vedant-rajputt" target="_blank" class="social-icon"
+                    aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="mailto:vedantt.rajput@gmail.com" class="social-icon" aria-label="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://github.com/vedant-rajput" class="social-icon" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="tel:+33626477886" class="social-icon" aria-label="Phone">
+                    <i class="fas fa-phone"></i>
+                </a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="hero">
+        <canvas id="data-canvas"></canvas>
+        <div class="hero-particles" id="hero-particles"></div>
+
+        <div class="hero-content">
+            <div class="hero-tagline-wrapper">
+                <span class="tagline" id="typewriter"></span>
+                <span class="cursor">|</span>
+            </div>
+            <h1 class="hero-title" id="hero-title">
+                <span class="char">V</span><span class="char">e</span><span class="char">d</span><span
+                    class="char">a</span><span class="char">n</span><span class="char">t</span>
+                <span class="char space"> </span>
+                <span class="char">R</span><span class="char">a</span><span class="char">j</span><span
+                    class="char">p</span><span class="char">u</span><span class="char">t</span>
+            </h1>
+            <p class="hero-description">
+                Turning Complex Data into <span class="highlight" id="highlight-text">Actionable Intelligence</span>.
+            </p>
+            <div class="hero-btns">
+                <a href="#projects" class="btn-primary magnetic-btn">
+                    <span>View Projects</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="resume.pdf" target="_blank" class="btn-secondary magnetic-btn">
+                    <span>Download Resume</span>
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>
+
+            <!-- Scroll Indicator (the little mouse indicator)
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <div class="scroll-text">Scroll to explore</div> -->
+        </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">About Me</span>
+                <h2 class="section-title">Who I Am</h2>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text-wrapper">
+                    <p class="about-text" id="about-text">
+                        Hi, I'm <span class="text-highlight">Vedant Rajput</span>. Currently pursuing a Master's in Data
+                        Science and
+                        Analytics at EPITA.
+                        Passionate about applying analytical and technical skills to real-world engineering projects.
+                        Seeking internships to contribute to innovative initiatives and deliver data-driven solutions.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat-item" data-count="5">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Certifications</span>
+                        </div>
+                        <div class="stat-item" data-count="6">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                        <div class="stat-item" data-count="15">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Tech Skills</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-content" style="margin-top: 2rem;">
+            <div class="about-text-wrapper">
+                <p class="about-text" style="text-align: justify;">
+                    At <a href="https://elearning.mtai.in/tutor-certificate/?cert_hash=7707b90417a3aef6" target="_blank"
+                        rel="noopener noreferrer"
+                        style="color: #14b8a6; text-decoration: none; font-weight: 600; transition: opacity 0.2s;"
+                        onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">MetaTaaraka</a>,
+                    Which was an AICTE-approved virtual internship program recognized by the Ministry of Education,
+                    Govt. of India. This intensive 4-month residency focused on the end-to-end Python implementation of
+                    industry-standard AI solutions across multiple domains.
+                    Where I Developed, Implemented and optimized over 20+ AI/ML projects, transitioning from raw data
+                    ingestion to production-ready deployments.
+                    Engineered solutions in Natural Language Processing (NLP), Computer Vision (CV), and Predictive
+                    Analytics using advanced Python libraries.
+                    Also, Completed 30+ modular assessments covering deep learning architectures (CNNs, RNNs) and
+                    ensemble learning techniques with a focus on mathematical accuracy and code efficiency.
+                </p>
+            </div>
+        </div>
+        </div>
+    </section>
+
+
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Expertise</span>
+                <h2 class="section-title">Tech Stack & Tools</h2>
+            </div>
+
+            <!-- Animated Tech Logos -->
+            <div class="tech-logos-container">
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/files/python-logo-only.svg"
+                        alt="Python" class="tech-logo-img">
+                    <!--img src="logos_required/Unique Icons/python-logo/python.png" alt="Python" class="tech-logo-img"-->
+                    <p>Python</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/java-original.png" alt="Java" class="tech-logo-img">
+                    <!-- img src="logos_required/Unique Icons/java/java (2).png" alt="Java" class="tech-logo-img" -->
+                    <p>Java</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <!-- img src="logos_required/Category Icons/py-libraries/tf.svg" alt="TensorFlow" class="tech-logo-img" -->
+                    <img src="https://logo.svgcdn.com/devicon/tensorflow-original.png" alt="TensorFlow"
+                        class="tech-logo-img">
+                    <p>TensorFlow</p>
+                </div>
+
+                <!-- <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/google-original.png" alt="Google" class="tech-logo-img">
+                    <img src="https://logo.svgcdn.com/logos/google.png" alt="Google" class="tech-logo-img"
+                    <p>Google</p>
+                </div> 
+                        -->
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/git-original.png" alt="GIT" class="tech-logo-img">
+                    <p>GIT</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/logos/mysql.png" alt="SQL" class="tech-logo-img">
+                    <p>MySQL</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/amazonwebservices-original.png" alt="AWS"
+                        class="tech-logo-img">
+                    <p>AWS</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/googlecloud-original.png" alt="Distributed Cloud"
+                        class="tech-logo-img">
+                    <p>Cloud Computing</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/docker-original-wordmark.png" alt="Docker"
+                        class="tech-logo-img">
+                    <p>Docker</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/logos/jupyter.png" alt="Jupyter" class="tech-logo-img">
+                    <p>Jupyter</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/anaconda-original.png" alt="Anaconda"
+                        class="tech-logo-img">
+                    <p>Anaconda</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/logos/grafana.png" alt="Grafana" class="tech-logo-img">
+                    <p>Grafana</p>
+                </div>
+
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/apacheairflow-original.png" alt="Airflow"
+                        class="tech-logo-img">
+                    <p>Airflow</p>
+                </div>
+
+                <!-- Matplotlib (commented out)
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/devicon/matplotlib-original.png" alt="MatPlotLib" class="tech-logo-img">
+                    <p>Matplotlib</p>
+                </div>
+                -->
+
+                <!-- SeaBorn (commented out)
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/logos/seaborn-icon.png" alt="SeaBorn" class="tech-logo-img">
+                    <p>SeaBorn</p>
+                </div>
+                -->
+
+                <!-- Pandas (commented out)
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/logos/pandas-icon.png" alt="Pandas" class="tech-logo-img">
+                    <p>Pandas</p>
+                </div>
+                -->
+
+                <!-- Machine Learning (commented out)
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="logos_required/Category Icons/deep-learning-AI_Machine Learning/PNG/deep-learning (1).png" alt="Deep Learning" class="tech-logo-img deep-learning-logo">
+                    <p>Machine Learning</p>
+                </div>
+                -->
+
+                <!-- Data Analytics (commented out)
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="logos_required/google cloud legacy icons/analytics_hub/data-analytics.png" alt="Data Analytics" class="tech-logo-img">
+                    <p>Data Analytics</p>
+                </div>
+                -->
+
+                <!-- Grafana duplicate (commented out)
+                <div class="tech-logo-wrapper" data-tilt>
+                    <div class="tech-logo-glow"></div>
+                    <img src="https://logo.svgcdn.com/logos/grafana.png" alt="Grafana" class="tech-logo-img">
+                    <p>Grafana</p>
+                </div>
+                -->
+
+
+            </div>
+
+            <hr class="skills-divider">
+
+            <!-- Skills Grid -->
+            <div class="skills-grid">
+                <div class="skill-card" data-tilt>
+                    <div class="skill-card-header">
+                        <div class="icon-box">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3>Technical Skills</h3>
+                    </div>
+                    <div class="tag-container">
+                        <span class="tag">Python</span>
+                        <span class="tag">Java</span>
+                        <span class="tag">SQL</span>
+                        <span class="tag">GIT</span>
+                        <span class="tag">Keras</span>
+                        <span class="tag">Scikit-Learn</span>
+                        <span class="tag">TensorFlow</span>
+                        <span class="tag">Data Structures</span>
+                        <span class="tag">Big Data</span>
+                        <span class="tag">NoSQL</span>
+                        <span class="tag">Cloud Computing</span>
+                        <span class="tag">Data Visualization</span>
+                        <span class="tag">Data Analysis</span>
+                        <span class="tag">Data Modeling</span>
+                        <span class="tag">HTML5</span>
+                        <span class="tag">CSS3</span>
+                        <span class="tag">Machine Learning</span>
+                        <span class="tag">Deep Learning</span>
+                        <span class="tag">Data Privacy</span>
+                    </div>
+                </div>
+
+                <div class="skill-card" data-tilt>
+                    <div class="skill-card-header">
+                        <div class="icon-box">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <h3>Languages</h3>
+                    </div>
+                    <div class="lang-list">
+                        <div class="lang-item">
+                            <span class="lang-name">English</span>
+                            <div class="lang-progress">
+                                <div class="lang-progress-bar" data-width="100%"></div>
+                            </div>
+                            <span class="lang-level">Bilingual (C2)</span>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-name">French</span>
+                            <div class="lang-progress">
+                                <div class="lang-progress-bar" data-width="40%"></div>
+                            </div>
+                            <span class="lang-level">Beginner (A2)</span>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-name">Hindi</span>
+                            <div class="lang-progress">
+                                <div class="lang-progress-bar" data-width="100%"></div>
+                            </div>
+                            <span class="lang-level">Native</span>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-name">Marathi</span>
+                            <div class="lang-progress">
+                                <div class="lang-progress-bar" data-width="100%"></div>
+                            </div>
+                            <span class="lang-level">Native</span>
+                        </div>
+                        <div class="lang-item">
+                            <span class="lang-name">Telugu</span>
+                            <div class="lang-progress">
+                                <div class="lang-progress-bar" data-width="100%"></div>
+                            </div>
+                            <span class="lang-level">Native</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-card" data-tilt>
+                    <div class="skill-card-header">
+                        <div class="icon-box">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Soft Skills</h3>
+                    </div>
+                    <ul class="soft-skills-list">
+                        <li><i class="fas fa-check-circle"></i> Adaptability</li>
+                        <li><i class="fas fa-check-circle"></i> Team Player</li>
+                        <li><i class="fas fa-check-circle"></i> Intercultural Communication</li>
+                        <li><i class="fas fa-check-circle"></i> Strategic Thinking</li>
+                        <li><i class="fas fa-check-circle"></i> Proactive Mindset</li>
+                        <li><i class="fas fa-check-circle"></i> Time Management</li>
+                        <li><i class="fas fa-check-circle"></i> Problem Solving</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="experience-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Journey</span>
+                <h2 class="section-title">Education & Experience</h2>
+            </div>
+
+            <div class="exp-grid">
+                <div class="education-col">
+                    <h3 class="col-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        Education
+                    </h3>
+
+                    <div class="timeline">
+                        <div class="timeline-item" data-aos="fade-up">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <span>Sept 2025 - March 2027</span>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Paris, France</span>
+                                </div>
+                                <h3>Master of Science in Data Science and Analytics</h3>
+                                <h4>EPITA: School of Engineering and Computer Science</h4>
+                                <h5>Focus on Data Science and Analytics</h5>
+                                <p>Relevant Coursework: Python, Java, Blockchain and Bitcoin, Machine Learning,
+                                    Algorithmic
+                                    Problem-solving, Network Protocols, Data Privacy, Predictive Analytics, Operating
+                                    Systems,
+                                    SQL, Project Management.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="100">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <span>Sept 2020 - June 2024</span>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Hyderabad, India</span>
+                                </div>
+                                <h3>Bachelor of Technology in Computer Science</h3>
+                                <h4>Jawaharlal Nehru Technological University - St.Martin's Engineering College</h4>
+                                <h5>Focus on Computer Science and Engineering fundamentals</h5>
+                                <p>Relevant Coursework: Data Structures and Algorithms, Object-Oriented Programming,
+                                    Database
+                                    Management, Computer Networks, Computer Security, Software Engineering, Data
+                                    Analysis, Web Development.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="certs-col">
+                    <h3 class="col-title">
+                        <i class="fas fa-award"></i>
+                        Certifications & Achievements
+                    </h3>
+
+                    <div class="info-card" data-tilt>
+                        <h4>Professional Certifications</h4>
+                        <ul class="cert-list">
+                            <li>
+                                <a href="https://www.theforage.com/completion-certificates/SKZxezskWgmFjRvj9/Tcz8gTtprzAS4xSoK_SKZxezskWgmFjRvj9_qGmwjrMBvGoA4S3Cx_1769811457191_completion_certificate.pdf"
+                                    target="_blank" class="cert-link">
+                                    <span class="cert-icon"><i class="fas fa-certificate"></i></span>
+                                    <span class="cert-text">BCG - Data Science Job Simulation</span>
+                                    <i class="fas fa-external-link-alt cert-arrow"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.theforage.com/completion-certificates/tMjbs76F526fF5v3G/NjynCWzGSaWXQCxSX_tMjbs76F526fF5v3G_qGmwjrMBvGoA4S3Cx_1766943140271_completion_certificate.pdf"
+                                    target="_blank" class="cert-link">
+                                    <span class="cert-icon"><i class="fas fa-certificate"></i></span>
+                                    <span class="cert-text">British Airways - Data Science Job Simulation</span>
+                                    <i class="fas fa-external-link-alt cert-arrow"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.theforage.com/completion-certificates/nkmk7gJitYs4TBvoA/9Wvq4L2WCFQDyyPp3_nkmk7gJitYs4TBvoA_qGmwjrMBvGoA4S3Cx_1766952307845_completion_certificate.pdf"
+                                    target="_blank" class="cert-link">
+                                    <span class="cert-icon"><i class="fas fa-certificate"></i></span>
+                                    <span class="cert-text">Wells Fargo - Software Engineering Job Simulation</span>
+                                    <i class="fas fa-external-link-alt cert-arrow"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.theforage.com/completion-certificates/xhih9yFWsf6AYfngd/HNpZwZcuYwona2d8Y_xhih9yFWsf6AYfngd_qGmwjrMBvGoA4S3Cx_1766951345105_completion_certificate.pdf"
+                                    target="_blank" class="cert-link">
+                                    <span class="cert-icon"><i class="fas fa-certificate"></i></span>
+                                    <span class="cert-text">Accenture Nordics - Software Engineering Job
+                                        Simulation</span>
+                                    <i class="fas fa-external-link-alt cert-arrow"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/9PBTqmSxAf6zZTseP/io9DzWKe3PTsiS6GG_9PBTqmSxAf6zZTseP_qGmwjrMBvGoA4S3Cx_1749627335153_completion_certificate.pdf"
+                                    target="_blank" class="cert-link">
+                                    <span class="cert-icon"><i class="fas fa-certificate"></i></span>
+                                    <span class="cert-text">Deloitte Australia - Data Analytics Job Simulation</span>
+                                    <i class="fas fa-external-link-alt cert-arrow"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="sub-text">* Issued by Forage after completing virtual job simulations.</div>
+                    </div>
+
+                    <div class="info-card" data-tilt>
+                        <h4>Key Achievements</h4>
+                        <ul class="achievement-list">
+                            <li><i class="fas fa-medal"></i> Officially Licensed Badminton Player (FFBAD)</li>
+                            <li><i class="fas fa-trophy"></i> National Football Player & College Team Captain</li>
+                            <li><i class="fas fa-globe"></i> Delegate of Cuba in India's International Movement To Unite
+                                Nations (2018)</li>
+                            <li><i class="fas fa-skating"></i> 4th Place in Telangana CBSE Clusters National Skating
+                                Championship</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Portfolio</span>
+                <h2 class="section-title">Featured Projects</h2>
+            </div>
+
+            <!-- the watermark logos should be changed on every project, cause the source image lies within the desktop-->
+
+            <!-- NASA Project -->
+            <div class="project-card" data-tilt data-aos="fade-up">
+                <div class="project-watermark"
+                    style="background-image: url('logos_required/Category Icons/nasa-lo/sattelite-dish.png')"></div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <span class="project-category">Deep Learning & Machine Learning</span>
+                        <div class="project-links">
+                            <a href="#" class="project-link" aria-label="View Project"><i
+                                    class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">NASA's Helio Forecast: Geomagnetic Storm Prediction</h3>
+                    <p class="project-subtitle">Deep Learning on Solar Wind Telemetry</p>
+                    <p class="project-description">
+                        Designed an automated ETL pipeline to ingest real-time solar wind telemetry (ACE/DSCOVR
+                        satellites) from NASA's SPDF interface,
+                        handling missing data and sensor noise (fill-value imputation).
+                    </p>
+                    <div class="project-details">
+                        Engineered an end-to-end Deep Learning pipeline that ingests raw telemetry from NASA's ACE and
+                        DSCOVR satellites (located at the L1 Lagrange point).
+                        Implemented domain-specific physics features, such as Eyring Energy (V × Bz), to capture the
+                        energy transfer efficiency between the solar wind and Earth's magnetosphere.
+                        Developed a Bidirectional LSTM neural network that captures temporal dependencies and "memory"
+                        of the magnetosphere.
+                    </div>
+                    <div class="project-tags">
+                        <span>Deep Learning</span>
+                        <span>Machine Learning</span>
+                        <span>Python</span>
+                        <span>TensorFlow</span>
+                        <span>Pandas</span>
+                        <span>Seaborn</span>
+                        <span>Integer Quantization</span>
+                    </div>
+                    <div class="sub-text-1">*Data Source: NASA/GSFC Space Physics Data Facility's OMNIWeb service. This
+                        project is an independent research initiative.</div>
+                </div>
+            </div>
+
+            <!-- Homomorphic Encryption Project -->
+            <div class="project-card" data-tilt data-aos="fade-up">
+                <div class="project-watermark"
+                    style="background-image: url('logos_required/google cloud legacy icons/advanced_solutions_lab/advanced_solutions_lab.png')">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <span class="project-category">Machine Learning & AI</span>
+                        <div class="project-links">
+                            <a href="#" class="project-link" aria-label="View Project"><i
+                                    class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Privacy-Preserving AI with Fully Homomorphic Encryption</h3>
+                    <p class="project-subtitle">Running ML models on encrypted medical data using Zama & Concrete ML</p>
+                    <p class="project-description">
+                        Built a system where the AI never sees the patient's data. Using Fully Homomorphic Encryption, I
+                        trained a model that performs mathematical operations directly on encrypted ciphertext.
+                    </p>
+                    <div class="project-details">
+                        With the help of a Logistic Regression model in Scikit-Learn, I developed a model that
+                        distinguishes
+                        between malignant and benign samples, then compiled it into a cryptographic circuit using Zama's
+                        compiler. The model successfully predicts malignancy on encrypted inputs.
+                    </div>
+                    <div class="project-tags">
+                        <span>Machine Learning</span>
+                        <span>Encryption Techniques</span>
+                        <span>Integer Quantization</span>
+                        <span>Threat Analysis</span>
+                        <span>Data Security</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bittensor Project -->
+            <div class="project-card" data-tilt data-aos="fade-up">
+                <div class="project-watermark"
+                    style="background-image: url('logos_required/google cloud legacy icons/advanced_solutions_lab/microchip.png')">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <span class="project-category">Quantitative Analysis</span>
+                        <div class="project-links">
+                            <a href="#" class="project-link" aria-label="View Project"><i
+                                    class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Optimizing Staking Strategies on Bittensor (TAO) Blockchain</h3>
+                    <p class="project-subtitle">Data Science approach to decentralized AI networks</p>
+                    <p class="project-description">
+                        Visualized network performance via Matplotlib, plotting the "Efficient Frontier" of
+                        decentralized AI
+                        models to justify a data-driven investment strategy.
+                    </p>
+                    <div class="project-details">
+                        Built a custom analytics script that interacts directly with the Bittensor blockchain to
+                        mathematically determine the best performing subnets. Using the bittensor Python library to
+                        connect
+                        to the Finney mainnet and fetch real-time metagraph data (stake, emissions, dividends).
+                    </div>
+                    <div class="project-tags">
+                        <span>Blockchain</span>
+                        <span>Machine Learning</span>
+                        <span>Subnets</span>
+                        <span>Efficient Frontier</span>
+                        <span>Bittensor</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Privacy Project -->
+            <div class="project-card" data-tilt data-aos="fade-up">
+                <div class="project-watermark"
+                    style="background-image: url('logos_required/google cloud legacy icons/security/security.png')">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <span class="project-category">Healthcare AI</span>
+                        <div class="project-links">
+                            <a href="#" class="project-link" aria-label="View Project"><i
+                                    class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Data Privacy & Security Enhancement</h3>
+                    <p class="project-subtitle">Securing Patient Data & Mitigating Risk in Healthcare AI Ecosystems</p>
+                    <p class="project-description">
+                        Architected a comprehensive threat-mitigation framework for a healthcare AI platform, addressing
+                        major critical risk categories.
+                    </p>
+                    <div class="project-details">
+                        Secured sensitive patient information by implementing advanced de-identification techniques
+                        including differential privacy, pseudonymization, and genomic masking via the ARX Tool.
+                        Engineered robust consent management workflows and encrypted audit logs.
+                    </div>
+                    <div class="project-tags">
+                        <span>Streamlined Compliance</span>
+                        <span>Threat Analysis</span>
+                        <span>Data Security</span>
+                        <span>Privacy Policy</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MRI Project -->
+            <div class="project-card" data-tilt data-aos="fade-up">
+                <div class="project-watermark"
+                    style="background-image: url('logos_required/google cloud legacy icons/medical_dia/medical-symbol.png')">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <span class="project-category">Machine Learning</span>
+                        <div class="project-links">
+                            <a href="#" class="project-link" aria-label="View Project"><i
+                                    class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">MRI Brain Tumor Classification</h3>
+                    <p class="project-subtitle">Hybrid VGG16-NADE model for medical imaging diagnostics</p>
+                    <p class="project-description">
+                        Engineered a hybrid VGG16-NADE (Neural Auto-regressive Distribution Estimation) model to enhance
+                        MRI
+                        brain tumor classification.
+                    </p>
+                    <div class="project-details">
+                        By implementing advanced data preprocessing and architectural optimization, I drove a
+                        significant
+                        accuracy increase from 90% to 97%. This research-driven approach outperformed existing
+                        diagnostic methods.
+                    </div>
+                    <div class="project-tags">
+                        <span>Python</span>
+                        <span>Computer Vision</span>
+                        <span>Image Processing</span>
+                        <span>Pandas & MatPlotLib</span>
+                        <span>Machine Learning</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IoT Project -->
+            <div class="project-card" data-tilt data-aos="fade-up">
+                <div class="project-watermark"
+                    style="background-image: url('logos_required/google cloud legacy icons/advanced_solutions_lab/iot 2.png')">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <span class="project-category">IoT Project</span>
+                        <div class="project-links">
+                            <a href="#" class="project-link" aria-label="View Project"><i
+                                    class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <h3 class="project-title">IoT Sewage Gas Monitoring System</h3>
+                    <p class="project-subtitle">Real-time monitoring for hazardous sewage gases</p>
+                    <p class="project-description">
+                        Engineered an innovative real-time monitoring system for detecting hazardous sewage gases (H2S
+                        and CH4).
+                    </p>
+                    <div class="project-details">
+                        Architected the hardware using microcontroller-based integration and specialized gas sensors
+                        such as
+                        MQ-2, coupled with wireless communication protocols to enable automated emergency alerting.
+                        Designed the logic for instant SMS/email notification triggers.
+                    </div>
+                    <div class="project-tags">
+                        <span>Atmospheric Analysis</span>
+                        <span>Sensors</span>
+                        <span>Hardware</span>
+                        <span>IoT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Get In Touch</span>
+                <h2 class="section-title">Let's Connect</h2>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <p class="contact-intro">
+                        I'm currently seeking internship opportunities in Data Science and Analytics. Whether you have a
+                        question or just want to say hi, I'll try my best to get back to you!
+                    </p>
+
+                    <div class="contact-cards">
+                        <div class="contact-card" data-tilt>
+                            <div class="contact-card-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-card-content">
+                                <span class="contact-card-label">Email</span>
+                                <a href="mailto:vedantt.rajput@gmail.com"
+                                    class="contact-card-value">vedantt.rajput@gmail.com</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-card" data-tilt>
+                            <div class="contact-card-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-card-content">
+                                <span class="contact-card-label">Phone</span>
+                                <span class="contact-card-value">+33 626477886</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-card" data-tilt>
+                            <div class="contact-card-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-card-content">
+                                <span class="contact-card-label">Location</span>
+                                <span class="contact-card-value">Paris, France</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-card" data-tilt>
+                            <div class="contact-card-icon">
+                                <i class="fab fa-linkedin-in"></i>
+                            </div>
+                            <div class="contact-card-content">
+                                <span class="contact-card-label">LinkedIn</span>
+                                <a href="https://www.linkedin.com/in/vedant-rajputt" target="_blank"
+                                    class="contact-card-value">vedant-rajputt</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form-wrapper">
+                    <h3>Send a Message</h3>
+                    <form id="contactForm" class="contact-form">
+                        <input type="hidden" name="access_key" value="5c154906-026d-4d26-8013-9cf14e94eaad">
+                        <input type="hidden" name="subject" value="New Contact from Portfolio">
+                        <input type="hidden" name="from_name" value="Portfolio Contact Form">
+                        <input type="checkbox" name="botcheck" style="display: none;">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="name" name="name" placeholder="John Doe" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="email" name="email" placeholder="john@example.com" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <div class="input-wrapper textarea-wrapper">
+                                <i class="fas fa-comment"></i>
+                                <textarea id="message" name="message" placeholder="Hello, I'd like to discuss..."
+                                    rows="5" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit magnetic-btn">
+                            <span>Send Message</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span class="logo-text logo-glitch">VR<span class="dot">.</span></span>
+                <span class="footer-tagline">Data Scientist</span>
+            </div>
+            <div class="footer-socials">
+                <a href="https://www.linkedin.com/in/vedant-rajputt" target="_blank" aria-label="LinkedIn"><i
+                        class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/vedant-rajput" target="_blank" aria-label="GitHub"><i
+                        class="fab fa-github"></i></a>
+                <a href="mailto:vedantt.rajput@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+            <p class="footer-text">© 2026 Created by Vedant Rajput. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Theme Popup -->
+    <div id="theme-popup" class="theme-popup">
+        <div class="popup-content">
+            <div class="popup-icon">
+                <i class="fas fa-palette"></i>
+            </div>
+            <p id="popup-message"></p>
+            <div class="popup-btns">
+                <button id="popup-yes" class="btn-primary">Yes, update</button>
+                <button id="popup-no" class="btn-secondary">No, thanks</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
