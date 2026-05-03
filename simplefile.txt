@@ -1,1 +1,0 @@
-'Welcome to my s3 bucket'
