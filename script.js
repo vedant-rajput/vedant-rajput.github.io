@@ -575,26 +575,6 @@ function initSmoothScroll() {
 // ========================================
 // HIGHLIGHT TEXT ANIMATION
 // ========================================
-/* function initHighlightAnimation() {
-    const highlight = document.getElementById('highlight-text');
-    if (!highlight) return;
-
-    const words = ['Actionable Intelligence', 'Business Insights', 'Data Solutions', 'Strategic Decisions'];
-    let index = 0;
-
-    setInterval(() => {
-        highlight.style.opacity = '0';
-        setTimeout(() => {
-            index = (index + 1) % words.length;
-            highlight.textContent = words[index];
-            highlight.style.opacity = '1';
-        }, 300);
-    }, 4000);
-} */
-
-// ========================================
-// HIGHLIGHT TEXT ANIMATION
-// ========================================
 function initHighlightAnimation() {
     const highlight = document.getElementById('highlight-text');
     if (!highlight) return;
@@ -655,9 +635,9 @@ function updateDynamicCounters() {
     statItems.forEach(item => {
         const labelElement = item.querySelector('.stat-label');
         if (!labelElement) return;
-        
+
         const label = labelElement.textContent.trim().toLowerCase();
-        
+
         if (label.includes('certifications')) {
             const count = document.querySelectorAll('.cert-list li').length;
             item.setAttribute('data-count', count);
