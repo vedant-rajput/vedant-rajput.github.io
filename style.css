@@ -1063,18 +1063,47 @@ section {
     opacity: 1;
 }
 
+@keyframes techLogoFloat {
+    0%, 100% {
+        transform: translateY(0px);
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+    }
+    50% {
+        transform: translateY(-10px);
+        filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.12));
+    }
+}
+
 .tech-logo-img {
     width: 80px;
     height: 80px;
     object-fit: contain;
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
     transition: var(--transition-normal);
+    animation: techLogoFloat 3s ease-in-out infinite;
 }
 
 .tech-logo-wrapper:hover .tech-logo-img {
     transform: scale(1.15) translateY(-10px);
     filter: drop-shadow(0 8px 25px var(--accent-glow));
+    animation: none;
 }
+
+/* Staggered float delays so logos bounce at different phases */
+.tech-logo-wrapper:nth-child(1)  .tech-logo-img { animation-delay: 0s; }
+.tech-logo-wrapper:nth-child(2)  .tech-logo-img { animation-delay: -0.3s; }
+.tech-logo-wrapper:nth-child(3)  .tech-logo-img { animation-delay: -0.6s; }
+.tech-logo-wrapper:nth-child(4)  .tech-logo-img { animation-delay: -0.9s; }
+.tech-logo-wrapper:nth-child(5)  .tech-logo-img { animation-delay: -1.2s; }
+.tech-logo-wrapper:nth-child(6)  .tech-logo-img { animation-delay: -1.5s; }
+.tech-logo-wrapper:nth-child(7)  .tech-logo-img { animation-delay: -1.8s; }
+.tech-logo-wrapper:nth-child(8)  .tech-logo-img { animation-delay: -2.1s; }
+.tech-logo-wrapper:nth-child(9)  .tech-logo-img { animation-delay: -2.4s; }
+.tech-logo-wrapper:nth-child(10) .tech-logo-img { animation-delay: -2.7s; }
+.tech-logo-wrapper:nth-child(11) .tech-logo-img { animation-delay: -0.4s; }
+.tech-logo-wrapper:nth-child(12) .tech-logo-img { animation-delay: -0.7s; }
+.tech-logo-wrapper:nth-child(13) .tech-logo-img { animation-delay: -1.0s; }
+.tech-logo-wrapper:nth-child(14) .tech-logo-img { animation-delay: -1.6s; }
 
 .tech-logo-wrapper p {
     font-size: 0.9rem;
