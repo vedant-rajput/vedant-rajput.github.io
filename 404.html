@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Vedant Rajput</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
+    <style>
+        .nf {
+            min-height: 100vh; min-height: 100svh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 24px; position: relative; z-index: 1;
+        }
+        .nf-code {
+            font-family: var(--font-mono); font-size: clamp(5rem, 18vw, 11rem);
+            font-weight: 500; letter-spacing: -0.04em; line-height: 1;
+            background: linear-gradient(100deg, var(--teal), var(--cyan), var(--violet));
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; color: transparent;
+        }
+        .nf-msg { color: var(--text-dim); font-size: 1.1rem; margin: 22px 0 36px; }
+        .nf-msg .mono { color: var(--text-faint); }
+    </style>
+</head>
+
+<body>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <main class="nf">
+        <div class="nf-code">404</div>
+        <p class="nf-msg">This page fell outside the training distribution.<br>
+            <span class="mono">// prediction confidence: 0.00</span></p>
+        <a href="/" class="btn btn-primary"><span>Back to the portfolio</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg>
+        </a>
+    </main>
+</body>
+
+</html>

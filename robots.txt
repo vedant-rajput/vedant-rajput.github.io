@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vedant-rajput.github.io/sitemap.xml
