@@ -423,7 +423,10 @@ a { color: inherit; text-decoration: none; }
 .tags span:hover { color: var(--teal); background: var(--teal-glow); transform: translateY(-2px); }
 
 /* ============ Flagship showcases ============ */
-.showcase { padding: 150px 0; }
+.showcase { padding: 120px 0; }
+/* the section head introduces the first showcase — keep them together */
+#projects .section-head { margin-bottom: 0; }
+#showcase-nasa { padding-top: 48px; }
 .show-kicker { color: var(--teal); font-size: 0.76rem; margin-bottom: 22px; }
 .show-title {
     font-size: clamp(2.6rem, 6.5vw, 5rem);
