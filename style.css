@@ -431,7 +431,8 @@ a { color: inherit; text-decoration: none; }
     margin-bottom: 64px;
     overflow: hidden;
 }
-#kp-chart { display: block; width: 100%; height: clamp(180px, 30vw, 300px); }
+#kp-chart { display: block; width: 100%; height: clamp(190px, 32vw, 320px); }
+.chart-head { color: var(--text-faint); font-size: 0.72rem; margin-bottom: 14px; }
 .chart-legend {
     display: flex; gap: 26px; flex-wrap: wrap;
     margin-top: 16px; color: var(--text-faint); font-size: 0.72rem;
@@ -439,8 +440,9 @@ a { color: inherit; text-decoration: none; }
 .chart-legend span { display: inline-flex; align-items: center; gap: 8px; }
 .lg { display: inline-block; width: 22px; height: 2px; }
 .lg-teal { background: var(--teal); box-shadow: 0 0 8px var(--teal); }
-.lg-dash {
-    background: repeating-linear-gradient(90deg, var(--text-faint) 0 4px, transparent 4px 8px);
+.lg-violet {
+    background: repeating-linear-gradient(90deg, var(--violet) 0 6px, transparent 6px 10px);
+    box-shadow: 0 0 8px rgba(167, 139, 250, 0.45);
 }
 
 /* Big Apple-style stats */
@@ -665,17 +667,22 @@ a { color: inherit; text-decoration: none; }
                 box-shadow var(--slow) var(--ease), opacity 1s var(--ease);
 }
 
-/* Kp chart draw-on-scroll */
+/* Kp chart: observed line draws on scroll, prediction fades in after */
 #kp-chart .kp-line {
-    fill: none; stroke: var(--teal); stroke-width: 2.5;
+    fill: none; stroke: var(--teal); stroke-width: 2;
     stroke-linecap: round; stroke-linejoin: round;
-    filter: drop-shadow(0 0 6px rgba(45, 212, 191, 0.5));
+    filter: drop-shadow(0 0 6px rgba(45, 212, 191, 0.45));
 }
-#kp-chart .kp-area { fill: url(#kp-fill); opacity: 0; transition: opacity 1.4s var(--ease) 1.6s; }
-#kp-chart .kp-thresh { stroke: var(--text-faint); stroke-width: 1; stroke-dasharray: 4 6; opacity: 0.6; }
+#kp-chart .kp-pred {
+    fill: none; stroke: var(--violet); stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 7 6;
+    filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.4));
+    opacity: 0; transition: opacity 1.2s var(--ease) 1.9s;
+}
+.show-visual.in-view #kp-chart .kp-pred { opacity: 1; }
 #kp-chart .kp-grid { stroke: rgba(255, 255, 255, 0.05); stroke-width: 1; }
 #kp-chart .kp-label { fill: var(--text-faint); font-family: var(--font-mono); font-size: 11px; }
-.show-visual.in-view #kp-chart .kp-area { opacity: 1; }
 
 /* ============ Responsive ============ */
 @media (max-width: 980px) {
@@ -732,7 +739,7 @@ a { color: inherit; text-decoration: none; }
     .reveal, .stagger { opacity: 1; transform: none; }
     #bg-canvas, .scroll-cue, .aurora { display: none; }
     .pipe-node { opacity: 1; transform: none; }
-    #kp-chart .kp-area { opacity: 1; }
+    #kp-chart .kp-pred { opacity: 1; }
 }
 
 /* ============ Print ============ */

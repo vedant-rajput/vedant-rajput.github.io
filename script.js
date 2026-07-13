@@ -252,18 +252,21 @@ const DPR = Math.min(window.devicePixelRatio || 1, 2);
 })();
 
 /* ============================================================
-   NASA showcase: Kp-index chart that draws itself on scroll
+   NASA showcase: real model output — actual NASA Kp (stepped)
+   vs AI prediction (dashed). Observed line draws on scroll,
+   the prediction fades in over it.
    ============================================================ */
 (function kpChart() {
     const svg = document.getElementById('kp-chart');
     if (!svg) return;
 
     const NS = 'http://www.w3.org/2000/svg';
-    const W = 860, H = 300;
-    const M = { l: 34, r: 12, t: 14, b: 26 };
+    const W = 860, H = 320;
+    const M = { l: 34, r: 12, t: 14, b: 36 };
     const plotW = W - M.l - M.r, plotH = H - M.t - M.b;
-    const KP_MAX = 9;
+    const KP_MAX = 5, HOURS = 200;
 
+    const xFor = (h) => M.l + (plotW * h) / HOURS;
     const yFor = (kp) => M.t + plotH * (1 - kp / KP_MAX);
     const el = (name, attrs) => {
         const n = document.createElementNS(NS, name);
@@ -271,54 +274,76 @@ const DPR = Math.min(window.devicePixelRatio || 1, 2);
         return n;
     };
 
-    // Synthetic but plausible Kp series: quiet field, a storm, recovery
-    const N = 120;
-    const data = [];
-    let level = 2;
-    for (let i = 0; i < N; i++) {
-        const t = i / (N - 1);
-        let target = 2;
-        if (t > 0.52 && t < 0.62) target = 2 + (t - 0.52) * 60;     // onset
-        else if (t >= 0.62 && t < 0.72) target = 8 - (t - 0.62) * 25; // peak & decay
-        else if (t >= 0.72) target = 3.2 - (t - 0.72) * 4;            // recovery
-        level += (target - level) * 0.35 + (Math.random() - 0.5) * 0.55;
-        data.push(Math.max(0.3, Math.min(8.7, level)));
-    }
+    // Actual NASA Kp — quantized steps: [hour the value starts, Kp]
+    const actual = [
+        [0, 1.3], [3, 1.7], [10, 2], [13, 2.3], [16, 3], [19, 2], [21, 1.7], [26, 2.7],
+        [29, 2.3], [30, 2.7], [31, 1.7], [34, 3], [37, 2.7], [40, 0.7], [43, 2], [46, 1.3],
+        [49, 2.7], [52, 4.3], [55, 3.3], [58, 1.7], [61, 1], [64, 1.3], [67, 1.7], [70, 2],
+        [73, 1], [76, 0.3], [79, 0], [84, 0.3], [92, 1], [100, 0], [102, 0.7], [105, 1],
+        [108, 2.7], [111, 3], [113, 4], [121, 2.7], [124, 1.7], [127, 1], [129, 2.7],
+        [132, 2.3], [134, 2], [137, 2.7], [148, 4.7], [151, 4], [154, 2.3], [157, 2.7],
+        [160, 2.3], [163, 2], [166, 2.3], [169, 3], [171, 1.7], [175, 2.3], [178, 1.7],
+        [181, 2], [183, 2.7], [186, 4], [189, 2.3], [192, 3.7], [195, 3], [198, 3.3],
+    ];
 
-    // defs: gradient fill under the line
-    const defs = el('defs', {});
-    const grad = el('linearGradient', { id: 'kp-fill', x1: 0, y1: 0, x2: 0, y2: 1 });
-    grad.appendChild(el('stop', { offset: '0%', 'stop-color': 'rgba(45,212,191,0.22)' }));
-    grad.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(45,212,191,0)' }));
-    defs.appendChild(grad);
-    svg.appendChild(defs);
+    // Predicted Kp (AI) — smooth curve keypoints
+    const predicted = [
+        [0, 2.35], [5, 2.6], [7, 2.7], [10, 2.5], [13, 2.3], [15, 2.15], [18, 2.7],
+        [20, 2.85], [23, 2.9], [26, 3.1], [28, 2.9], [30, 2.8], [32, 2.9], [34, 3.0],
+        [36, 3.5], [38, 3.7], [40, 3.3], [43, 2.4], [45, 2.0], [47, 2.05], [49, 2.35],
+        [51, 2.4], [53, 2.35], [55, 2.5], [57, 2.6], [59, 2.3], [61, 2.0], [63, 1.6],
+        [65, 1.2], [67, 1.1], [69, 1.15], [71, 1.8], [73, 1.75], [75, 1.6], [77, 1.5],
+        [79, 1.45], [82, 1.35], [85, 1.3], [88, 1.3], [90, 1.35], [92, 1.3], [94, 1.5],
+        [96, 1.8], [98, 2.0], [100, 1.9], [102, 1.95], [104, 1.75], [106, 2.0], [108, 2.3],
+        [110, 2.5], [112, 2.7], [113, 3.3], [114, 2.9], [116, 3.1], [118, 3.9], [119, 4.5],
+        [120, 4.1], [122, 3.8], [124, 3.5], [126, 3.0], [128, 2.85], [130, 2.7], [133, 2.7],
+        [135, 2.9], [137, 3.0], [139, 2.7], [141, 2.4], [143, 2.1], [145, 2.0], [147, 2.05],
+        [149, 2.4], [151, 2.3], [152, 2.1], [153, 3.0], [155, 4.1], [157, 3.7], [159, 3.5],
+        [161, 3.3], [163, 3.4], [165, 3.0], [167, 2.6], [169, 2.4], [171, 2.3], [173, 2.4],
+        [175, 2.4], [177, 2.35], [178, 2.8], [180, 2.5], [182, 2.3], [184, 2.2], [186, 1.9],
+        [188, 1.8], [190, 2.1], [192, 2.8], [194, 2.4], [196, 2.5], [198, 2.3], [200, 2.2],
+    ];
 
-    // horizontal gridlines + labels at Kp 0/3/6/9
-    for (const kp of [0, 3, 6, 9]) {
+    // gridlines + axis labels (Kp 0–4, hours 0–200)
+    for (let kp = 0; kp <= 4; kp++) {
         const y = yFor(kp);
         svg.appendChild(el('line', { class: 'kp-grid', x1: M.l, x2: W - M.r, y1: y, y2: y }));
         const label = el('text', { class: 'kp-label', x: M.l - 8, y: y + 4, 'text-anchor': 'end' });
         label.textContent = kp;
         svg.appendChild(label);
     }
+    for (let h = 0; h <= HOURS; h += 25) {
+        const x = xFor(h);
+        svg.appendChild(el('line', { class: 'kp-grid', x1: x, x2: x, y1: M.t, y2: H - M.b }));
+        if (h % 50 === 0) {
+            const label = el('text', { class: 'kp-label', x, y: H - M.b + 16, 'text-anchor': 'middle' });
+            label.textContent = h;
+            svg.appendChild(label);
+        }
+    }
+    const xAxis = el('text', { class: 'kp-label', x: M.l + plotW / 2, y: H - 4, 'text-anchor': 'middle' });
+    xAxis.textContent = 'hours';
+    svg.appendChild(xAxis);
 
-    // storm threshold (Kp 5)
-    svg.appendChild(el('line', {
-        class: 'kp-thresh',
-        x1: M.l, x2: W - M.r, y1: yFor(5), y2: yFor(5),
-    }));
+    // stepped path for the observed series
+    let stepD = `M${xFor(actual[0][0]).toFixed(1)},${yFor(actual[0][1]).toFixed(1)}`;
+    for (let i = 1; i < actual.length; i++) {
+        const x = xFor(actual[i][0]).toFixed(1);
+        stepD += ` L${x},${yFor(actual[i - 1][1]).toFixed(1)} L${x},${yFor(actual[i][1]).toFixed(1)}`;
+    }
+    stepD += ` L${xFor(HOURS).toFixed(1)},${yFor(actual[actual.length - 1][1]).toFixed(1)}`;
 
-    const pts = data.map((kp, i) => [M.l + (plotW * i) / (N - 1), yFor(kp)]);
-    const lineD = 'M' + pts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' L');
-    const areaD = `${lineD} L${W - M.r},${yFor(0)} L${M.l},${yFor(0)} Z`;
+    const predD = 'M' + predicted
+        .map(([h, kp]) => `${xFor(h).toFixed(1)},${yFor(kp).toFixed(1)}`)
+        .join(' L');
 
-    svg.appendChild(el('path', { class: 'kp-area', d: areaD }));
-    const line = el('path', { class: 'kp-line', d: lineD, pathLength: 1 });
+    const line = el('path', { class: 'kp-line', d: stepD, pathLength: 1 });
     svg.appendChild(line);
+    svg.appendChild(el('path', { class: 'kp-pred', d: predD }));
 
     if (prefersReducedMotion) return;
 
-    // draw on first view
+    // observed line draws on first view; prediction fade is CSS-driven
     line.style.strokeDasharray = '1';
     line.style.strokeDashoffset = '1';
     const io = new IntersectionObserver((entries) => {
