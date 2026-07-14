@@ -27,6 +27,7 @@
 
     <link rel="preload" href="fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
+    <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
 
@@ -54,6 +55,18 @@
 
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- Preloader -->
+    <div id="preloader" aria-hidden="true">
+        <div class="pre-inner">
+            <span class="pre-brand"><span class="brand-mark">◆</span> vedant<span class="pre-accent">.rajput</span></span>
+            <span class="pre-count mono" id="pre-count">00</span>
+        </div>
+    </div>
+
+    <!-- Custom cursor (fine pointers only) -->
+    <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-ring" id="cursor-ring" aria-hidden="true"><span id="cursor-label"></span></div>
 
     <!-- Shared SVG symbols -->
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -97,7 +110,7 @@
                     <a class="nav-icon" href="https://github.com/vedant-rajput" target="_blank" rel="noopener" aria-label="GitHub">
                         <svg width="16" height="16"><use href="#i-github"/></svg>
                     </a>
-                    <a class="nav-icon" href="tel:+33626477886" aria-label="Call +33 6 26 47 78 86">
+                    <a class="nav-icon" href="tel:+33 06 26 47 78 86" aria-label="Call +33 06 26 47 78 86">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.27a2 2 0 0 1 2.1-.45c.9.34 1.85.57 2.8.7a2 2 0 0 1 1.7 2.02Z"/></svg>
                     </a>
                 </div>
@@ -116,8 +129,8 @@
         <div class="hero-content" id="hero-content">
             <p class="hero-kicker reveal"><span class="pulse-dot"></span> Open to a 6-month data science internship · July 2026</p>
             <h1 class="hero-title">
-                <span class="line reveal">Engineering Data Pipelines</span>
-                <span class="line line-gradient reveal">Training Intelligence</span>
+                <span class="line"><span class="line-inner">Engineering Data Pipelines</span></span>
+                <span class="line line-gradient"><span class="line-inner">Training Intelligence</span></span>
             </h1>
             <p class="hero-sub reveal">
                 Vedant Rajput · M.Sc. Data Science &amp; Analytics at <strong>EPITA, Paris</strong>.
@@ -258,10 +271,10 @@
             <div class="showcase" id="showcase-nasa">
                 <div class="container">
                     <p class="show-kicker mono reveal">Featured · Deep learning on solar-wind telemetry</p>
-                    <h3 class="show-title reveal">Storms, Forecast<br>three hours early.</h3>
+                    <h3 class="show-title reveal">Storms, forecast<br>three hours early.</h3>
                     <p class="show-sub reveal">
                         A bidirectional LSTM reads NASA satellite telemetry and predicts geomagnetic storms before
-                        they reach Earth trained on 24+ months of OMNIWeb data with physics-informed features.
+                        they reach Earth — trained on 24+ months of OMNIWeb data with physics-informed features.
                     </p>
 
                     <div class="show-visual reveal" aria-hidden="true">
@@ -335,23 +348,53 @@
                 </div>
             </div>
 
+            <!-- Flagship 3: MLOps -->
+            <div class="showcase" id="showcase-mlops">
+                <div class="container">
+                    <p class="show-kicker mono reveal">featured · production mlops on nyc taxi data</p>
+                    <h3 class="show-title reveal">Models that<br>retrain themselves.</h3>
+                    <p class="show-sub reveal">
+                        A production-grade taxi-fare prediction system that treats the model as a living component —
+                        ingestion to deployment, with data contracts guarding every batch and a Champion–Challenger
+                        duel deciding what ships.
+                    </p>
+
+                    <div class="pipeline reveal" id="mlops-pipeline" aria-hidden="true">
+                        <div class="pipe-node"><span class="mono">01</span><strong>Ingest</strong><small>scheduled Airflow 3 DAGs</small></div>
+                        <div class="pipe-arrow"><i></i></div>
+                        <div class="pipe-node"><span class="mono">02</span><strong>Validate</strong><small>Great Expectations data contracts</small></div>
+                        <div class="pipe-arrow"><i></i></div>
+                        <div class="pipe-node"><span class="mono">03</span><strong>Train &amp; Track</strong><small>MLflow · Champion vs Challenger</small></div>
+                        <div class="pipe-arrow"><i></i></div>
+                        <div class="pipe-node"><span class="mono">04</span><strong>Serve</strong><small>FastAPI in Docker</small></div>
+                    </div>
+
+                    <div class="show-stats">
+                        <div class="show-stat stagger">
+                            <span class="big-num">0</span>
+                            <span class="big-label">manual steps between data ingestion and a deployed model</span>
+                        </div>
+                        <div class="show-stat stagger">
+                            <span class="big-num">100%</span>
+                            <span class="big-label">of incoming batches validated against data contracts before inference</span>
+                        </div>
+                        <div class="show-stat stagger">
+                            <span class="big-num">24/7</span>
+                            <span class="big-label">Airflow DAGs monitor performance and trigger retraining on degradation</span>
+                        </div>
+                    </div>
+
+                    <a class="show-link reveal" href="https://github.com/vedant-rajput/taxi-fair-prediction"
+                        target="_blank" rel="noopener">
+                        <svg width="17" height="17"><use href="#i-github"/></svg><span>View on GitHub</span><em>→</em>
+                    </a>
+                </div>
+            </div>
+
             <!-- The grid -->
             <div class="container more-work">
                 <h3 class="more-title reveal">More work</h3>
                 <div class="bento projects-bento">
-                    <article class="card project stagger">
-                        <div class="proj-top">
-                            <span class="proj-cat mono">mlops</span>
-                            <a class="proj-link" href="https://github.com/vedant-rajput/taxi-fair-prediction" target="_blank" rel="noopener" aria-label="View Taxi Fare MLOps on GitHub">
-                                <svg width="18" height="18"><use href="#i-github"/></svg>
-                            </a>
-                        </div>
-                        <h3 class="proj-title">Self-retraining taxi-fare pipeline</h3>
-                        <p>Airflow 3, Great Expectations data contracts, MLflow tracking and Champion–Challenger
-                            promotion — served via FastAPI in Docker.</p>
-                        <div class="tags"><span>Airflow 3</span><span>MLflow</span><span>Docker</span><span>FastAPI</span></div>
-                    </article>
-
                     <article class="card project stagger">
                         <div class="proj-top">
                             <span class="proj-cat mono">computer vision</span>
@@ -498,11 +541,12 @@
                                 <span>github.com/vedant-rajput</span></a></li>
                             <li><a href="tel:+33 0626477886" class="contact-link">
                                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.27a2 2 0 0 1 2.1-.45c.9.34 1.85.57 2.8.7a2 2 0 0 1 1.7 2.02Z"/></svg>
-                                <span>+33 6 26 47 78 86</span></a></li>
+                                <span>+33 06 26 47 78 86</span></a></li>
                         </ul>
                     </div>
 
                     <form id="contact-form" class="card contact-form stagger" novalidate>
+                        <span class="form-sweep" aria-hidden="true"></span>
                         <input type="hidden" name="access_key" value="5c154906-026d-4d26-8013-9cf14e94eaad">
                         <input type="hidden" name="subject" value="New Contact from Portfolio">
                         <input type="hidden" name="from_name" value="Portfolio Contact Form">
@@ -521,7 +565,7 @@
                             <textarea id="cf-message" name="message" rows="5" placeholder="Hello Vedant, ..." required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary magnetic"><span>Send Message</span>
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-11 11M22 2 15 22l-4-9-9-4 20-7Z"/></svg>
+                            <svg class="plane" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-11 11M22 2 15 22l-4-9-9-4 20-7Z"/></svg>
                         </button>
                         <p class="form-status mono" id="form-status" role="status"></p>
                     </form>
@@ -556,7 +600,11 @@
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
     </button>
 
+    <script src="vendor/gsap.min.js" defer></script>
+    <script src="vendor/ScrollTrigger.min.js" defer></script>
+    <script src="vendor/lenis.min.js" defer></script>
     <script src="script.js" defer></script>
+    <script src="hero3d.js" type="module"></script>
 </body>
 
 </html>

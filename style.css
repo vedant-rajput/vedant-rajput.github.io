@@ -350,8 +350,8 @@ a { color: inherit; text-decoration: none; }
                 box-shadow var(--slow) var(--ease);
     will-change: transform;
 }
+/* lift/tilt transforms are driven by GSAP; CSS keeps the surface change */
 .card:hover {
-    transform: translateY(-5px) scale(1.015);
     background: var(--glass-hover);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09),
                 0 26px 64px -20px rgba(0, 0, 0, 0.75),
@@ -512,6 +512,7 @@ a { color: inherit; text-decoration: none; }
 .pipeline.in-view .pipe-node:nth-child(1) { transition-delay: 0.1s; }
 .pipeline.in-view .pipe-node:nth-child(3) { transition-delay: 0.55s; }
 .pipeline.in-view .pipe-node:nth-child(5) { transition-delay: 1s; }
+.pipeline.in-view .pipe-node:nth-child(7) { transition-delay: 1.45s; }
 
 .pipe-arrow {
     width: 56px; flex: none; position: relative;
@@ -530,6 +531,7 @@ a { color: inherit; text-decoration: none; }
 .pipeline.in-view .pipe-arrow i { animation: packet 2.4s var(--ease) infinite; }
 .pipeline.in-view .pipe-arrow:nth-child(2) i { animation-delay: 0.4s; }
 .pipeline.in-view .pipe-arrow:nth-child(4) i { animation-delay: 0.85s; }
+.pipeline.in-view .pipe-arrow:nth-child(6) i { animation-delay: 1.3s; }
 @keyframes packet {
     0% { opacity: 0; transform: translateX(0); }
     15% { opacity: 1; }
@@ -592,8 +594,24 @@ a { color: inherit; text-decoration: none; }
 .contact-link svg { color: var(--teal); flex: none; }
 .contact-link:hover { color: var(--text); background: var(--glass); transform: translateX(5px); }
 
-.contact-form { display: grid; gap: 18px; }
+.contact-form { display: grid; gap: 18px; overflow: hidden; }
 .contact-form:hover { transform: none; }
+
+/* light sweep that crosses the card when a message is sent */
+.form-sweep {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(105deg,
+        transparent 25%,
+        rgba(45, 212, 191, 0.10) 40%,
+        rgba(255, 255, 255, 0.17) 50%,
+        rgba(45, 212, 191, 0.10) 60%,
+        transparent 75%);
+    transform: translateX(-130%);
+}
+
+/* the plane needs a runway */
+.contact-form .btn { position: relative; overflow: hidden; }
+.contact-form .btn .plane { will-change: transform; }
 .field { display: grid; gap: 7px; }
 .field label { font-size: 0.82rem; color: var(--text-dim); font-weight: 500; }
 .field input, .field textarea {
@@ -670,18 +688,61 @@ a { color: inherit; text-decoration: none; }
 .back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 .back-to-top:hover { background: var(--glass-hover); }
 
-/* ============ Reveal animations — slower, softer ============ */
-.reveal, .stagger {
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 1s var(--ease), transform 1s var(--ease);
-    transition-delay: var(--d, 0s);
+/* ============ Reveal markers ============
+   .reveal / .stagger are choreographed by GSAP (script.js).
+   Content stays visible by default so the page never breaks without JS. */
+
+/* Masked hero headline lines */
+.hero-title .line { overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.hero-title .line-inner { display: inline-block; will-change: transform; }
+.line-gradient .line-inner {
+    background: linear-gradient(100deg, var(--teal) 10%, var(--cyan) 45%, var(--violet) 90%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
 }
-.reveal.in-view, .stagger.in-view { opacity: 1; transform: translateY(0); }
-.card.stagger.in-view {
-    transition: transform var(--slow) var(--ease), background var(--slow) var(--ease),
-                box-shadow var(--slow) var(--ease), opacity 1s var(--ease);
+
+/* ============ Preloader ============ */
+#preloader {
+    position: fixed; inset: 0; z-index: 400;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
 }
+.pre-inner {
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+}
+.pre-brand { font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; }
+.pre-accent { color: var(--text-faint); font-weight: 400; }
+.pre-count { color: var(--teal); font-size: 0.9rem; min-width: 4ch; text-align: center; }
+
+/* ============ Custom cursor ============ */
+.cursor-dot, .cursor-ring { display: none; }
+@media (pointer: fine) {
+    body.has-cursor, body.has-cursor a, body.has-cursor button, body.has-cursor .card { cursor: none; }
+    body.has-cursor input, body.has-cursor textarea, body.has-cursor label { cursor: text; }
+    body.has-cursor .cursor-dot, body.has-cursor .cursor-ring { display: block; }
+    .cursor-dot {
+        position: fixed; top: 0; left: 0; z-index: 500; pointer-events: none;
+        width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%;
+        background: var(--teal);
+    }
+    .cursor-ring {
+        position: fixed; top: 0; left: 0; z-index: 499; pointer-events: none;
+        width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%;
+        border: 1px solid rgba(45, 212, 191, 0.45);
+        display: grid !important; place-items: center;
+        will-change: transform;
+    }
+    .cursor-ring span {
+        font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.08em;
+        color: #04211d; opacity: 0; text-transform: uppercase;
+    }
+    .cursor-ring.is-label { background: var(--teal); border-color: var(--teal); }
+    .cursor-ring.is-label span { opacity: 1; }
+}
+
+/* Lenis smooth-scroll owns scrolling when active */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
 
 /* Kp chart: observed line draws on scroll, prediction fades in after */
 #kp-chart .kp-line {
@@ -758,8 +819,7 @@ a { color: inherit; text-decoration: none; }
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-    .reveal, .stagger { opacity: 1; transform: none; }
-    #bg-canvas, .scroll-cue, .aurora { display: none; }
+    #bg-canvas, .scroll-cue, .aurora, #preloader, .cursor-dot, .cursor-ring { display: none !important; }
     .pipe-node { opacity: 1; transform: none; }
     #kp-chart .kp-pred { opacity: 1; }
 }
@@ -767,7 +827,8 @@ a { color: inherit; text-decoration: none; }
 /* ============ Print ============ */
 @media print {
     .navbar, .scroll-progress, #bg-canvas, .bg-grid, .grain, .aurora, #net-canvas,
-    .scroll-cue, .hero-btns, .terminal, .back-to-top, .contact-form, .skip-link { display: none !important; }
+    .scroll-cue, .hero-btns, .terminal, .back-to-top, .contact-form, .skip-link,
+    #preloader, .cursor-dot, .cursor-ring { display: none !important; }
     body { background: #fff; color: #111; }
     .card, .pipe-node, .show-visual { box-shadow: none; background: #fff; border: 1px solid #ddd; }
     .card p, .card .stat-label, .plain-list, .contact-lede, .show-sub, .project p,
