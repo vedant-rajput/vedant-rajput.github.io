@@ -51,8 +51,7 @@ document.addEventListener('click', (e) => {
     const pre = document.getElementById('preloader');
     if (!pre) return;
 
-    const heroBits = ['.hero-kicker', '.hero-sub', '.hero-btns', '.hero-meta'];
-    const lines = document.querySelectorAll('.hero-title .line-inner');
+    const heroBits = ['.ed-kicker', '.ed-title', '.ed-sub', '.hero-btns', '.ed-note'];
 
     // No GSAP / reduced motion → skip the show entirely
     if (!hasGSAP || prefersReducedMotion) {
@@ -63,9 +62,7 @@ document.addEventListener('click', (e) => {
     // Repeat visit this session → short hero intro, no counter
     if (sessionStorage.getItem('vr-seen')) {
         pre.remove();
-        gsap.timeline({ defaults: { ease: EASE } })
-            .from(lines, { yPercent: 115, duration: 0.9, stagger: 0.1, ease: 'power4.out' })
-            .from(heroBits, { opacity: 0, y: 22, duration: 0.8, stagger: 0.08 }, '-=0.55');
+        gsap.from(heroBits, { opacity: 0, y: 18, duration: 0.9, stagger: 0.09, ease: EASE });
         return;
     }
     sessionStorage.setItem('vr-seen', '1');
@@ -85,10 +82,90 @@ document.addEventListener('click', (e) => {
         .to('.pre-inner', { opacity: 0, y: -16, duration: 0.35 })
         .to(pre, { clipPath: 'inset(0 0 100% 0)', duration: 0.85, ease: 'power4.inOut' }, '-=0.05')
         // hero intro overlaps the wipe
-        .from(lines, { yPercent: 115, duration: 1.1, stagger: 0.12, ease: 'power4.out' }, '-=0.55')
-        .from(heroBits, { opacity: 0, y: 26, duration: 0.9, stagger: 0.09 }, '-=0.7')
+        .from(heroBits, { opacity: 0, y: 24, duration: 1, stagger: 0.1 }, '-=0.5')
         .from('#net-canvas', { opacity: 0, duration: 1.4, ease: 'power2.out' }, '-=0.9')
         .from('.scroll-cue', { opacity: 0, duration: 0.6 }, '-=0.4');
+})();
+
+/* ============================================================
+   Blueprint — Renaissance construction geometry in the hero.
+   Golden-rectangle subdivision, a logarithmic spiral, circles
+   and diagonals, all hairlines, drawn in on load.
+   ============================================================ */
+(function blueprint() {
+    const svg = document.getElementById('blueprint');
+    if (!svg) return;
+
+    const NS = 'http://www.w3.org/2000/svg';
+    const W = 1440, H = 900;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+    const el = (name, attrs, cls) => {
+        const n = document.createElementNS(NS, name);
+        for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+        n.setAttribute('class', cls ? `bp ${cls}` : 'bp');
+        svg.appendChild(n);
+        return n;
+    };
+
+    const PHI = (1 + Math.sqrt(5)) / 2;
+    const cx = W / 2, cy = H / 2;
+
+    // golden rectangle centred on the title, subdivided into squares
+    const grH = 560, grW = grH * PHI;         // ≈ 906 × 560
+    let x = cx - grW / 2, y = cy - grH / 2, w = grW, h = grH;
+    el('rect', { x, y, width: w, height: h });
+    for (let i = 0; i < 7; i++) {
+        const side = i % 4; // cut from: 0 left, 1 top, 2 right, 3 bottom
+        if (side === 0) { const s = h; el('line', { x1: x + s, y1: y, x2: x + s, y2: y + h }, 'bp-dim'); x += s; w -= s; }
+        else if (side === 1) { const s = w; el('line', { x1: x, y1: y + s, x2: x + w, y2: y + s }, 'bp-dim'); y += s; h -= s; }
+        else if (side === 2) { const s = h; el('line', { x1: x + w - s, y1: y, x2: x + w - s, y2: y + h }, 'bp-dim'); w -= s; }
+        else { const s = w; el('line', { x1: x, y1: y + h - s, x2: x + w, y2: y + h - s }, 'bp-dim'); h -= s; }
+    }
+
+    // logarithmic (golden) spiral converging on the subdivision point
+    const sx = x + w / 2, sy = y + h / 2;
+    let d = '';
+    for (let deg = 0; deg <= 1440; deg += 6) {
+        const t = (deg * Math.PI) / 180;
+        const r = 3.2 * Math.pow(PHI, t / (Math.PI / 2));
+        if (r > 640) break;
+        const px = sx + r * Math.cos(t + Math.PI * 0.75);
+        const py = sy + r * Math.sin(t + Math.PI * 0.75);
+        d += (d ? ' L' : 'M') + px.toFixed(1) + ',' + py.toFixed(1);
+    }
+    el('path', { d }, 'bp bp-teal');
+
+    // construction circles + diagonals, like a da Vinci plate
+    el('circle', { cx: cx - 160, cy: cy - 210, r: 300 }, 'bp-dim');
+    el('circle', { cx: cx + 180, cy: cy + 230, r: 300 }, 'bp-dim');
+    el('line', { x1: 0, y1: 0, x2: W, y2: H }, 'bp-dim');
+    el('line', { x1: W, y1: 0, x2: 0, y2: H }, 'bp-dim');
+    el('line', { x1: cx, y1: 0, x2: cx, y2: H }, 'bp-dim');
+
+    if (!hasGSAP || prefersReducedMotion) return;
+
+    // hairlines draw themselves in under the preloader
+    const strokes = svg.querySelectorAll('path, line, rect, circle');
+    strokes.forEach((s) => {
+        const len = s.getTotalLength ? s.getTotalLength() : 2000;
+        s.style.strokeDasharray = len;
+        s.style.strokeDashoffset = len;
+    });
+    gsap.to(strokes, {
+        strokeDashoffset: 0, duration: 2.6, ease: 'power2.inOut',
+        stagger: 0.12, delay: 0.9,
+    });
+
+    // gentle parallax against the pointer
+    if (finePointer) {
+        const px = gsap.quickTo(svg, 'x', { duration: 1.2, ease: 'power3.out' });
+        const py = gsap.quickTo(svg, 'y', { duration: 1.2, ease: 'power3.out' });
+        window.addEventListener('pointermove', (e) => {
+            px((e.clientX / window.innerWidth - 0.5) * -18);
+            py((e.clientY / window.innerHeight - 0.5) * -12);
+        }, { passive: true });
+    }
 })();
 
 /* ============================================================
@@ -143,13 +220,13 @@ document.addEventListener('click', (e) => {
         });
     });
 
-    // aurora breathes away as you leave the hero; hero content recedes
+    // hero recedes as you leave it; the blueprint dissolves
     gsap.to('#hero-content', {
         opacity: 0.06, y: -60, scale: 0.965, ease: 'none',
         scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom 25%', scrub: 0.4 },
     });
-    gsap.to('.aurora', {
-        opacity: 0.25, ease: 'none',
+    gsap.to('#blueprint', {
+        opacity: 0.15, ease: 'none',
         scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true },
     });
 
@@ -181,6 +258,240 @@ document.addEventListener('click', (e) => {
             }),
         });
     });
+})();
+
+/* ============================================================
+   Burning-paper transition — a noise-threshold dissolve.
+   The page surface chars and burns away along an organic ember
+   edge as you scroll, sparks drifting up from the burn line.
+   ============================================================ */
+(function burnTransition() {
+    const canvas = document.getElementById('burn-canvas');
+    const section = document.getElementById('burn');
+    if (!canvas || !section) return;
+    if (!hasGSAP || prefersReducedMotion) { section.style.display = 'none'; return; }
+
+    const ctx = canvas.getContext('2d');
+    const RES = 2;                     // burn simulated at 1/2 resolution
+    let W = 0, H = 0, bw = 0, bh = 0;  // display + buffer sizes
+    let noise = null;                  // Float32Array threshold field
+    let buf = null;                    // low-res mask + fx ImageData pair
+    let progress = 0;
+    let sparks = [];
+    let rafId = null;
+    let inView = false;
+
+    /* --- multi-octave value noise, precomputed per resize --- */
+    function buildNoise() {
+        const cell = 46;
+        // grid sized for the highest-frequency octave (×5.1 + offsets)
+        const gw = Math.ceil((bw * 5.1 + 313) / cell) + 2;
+        const gh = Math.ceil((bh * 5.1 + 178) / cell) + 2;
+        const grid = new Float32Array(gw * gh);
+        for (let i = 0; i < grid.length; i++) grid[i] = Math.random();
+        const lerp = (a, b, t) => a + (b - a) * (t * t * (3 - 2 * t));
+
+        const sample = (x, y) => {
+            const gx = x / cell, gy = y / cell;
+            const x0 = gx | 0, y0 = gy | 0;
+            const fx = gx - x0, fy = gy - y0;
+            const i = y0 * gw + x0;
+            return lerp(
+                lerp(grid[i], grid[i + 1], fx),
+                lerp(grid[i + gw], grid[i + gw + 1], fx),
+                fy
+            );
+        };
+
+        noise = new Float32Array(bw * bh);
+        for (let y = 0; y < bh; y++) {
+            const vert = y / bh; // bias: burn starts at the top, finishes at the bottom
+            for (let x = 0; x < bw; x++) {
+                const n = sample(x, y) * 0.5 + sample(x * 2.3 + 91, y * 2.3 + 47) * 0.3
+                        + sample(x * 5.1 + 313, y * 5.1 + 178) * 0.2;
+                noise[y * bw + x] = n * 0.55 + vert * 0.45;
+            }
+        }
+    }
+
+    /* --- the burning sheet: a visible blueprint page.
+       Drawn at full resolution so its geometry and annotations are crisp;
+       the dissolve mask + fire colours are computed at low res. --- */
+    const paperCv = document.createElement('canvas');
+    const maskCv = document.createElement('canvas');
+    const fxCv = document.createElement('canvas');
+
+    function buildPaper() {
+        paperCv.width = W; paperCv.height = H;
+        const p = paperCv.getContext('2d');
+
+        // parchment tone, clearly lighter than the void behind
+        p.fillStyle = '#10141f';
+        p.fillRect(0, 0, W, H);
+
+        // grid
+        p.strokeStyle = 'rgba(255,255,255,0.05)';
+        p.lineWidth = 1;
+        p.beginPath();
+        for (let x = 0.5; x < W; x += 56) { p.moveTo(x, 0); p.lineTo(x, H); }
+        for (let y = 0.5; y < H; y += 56) { p.moveTo(0, y); p.lineTo(W, y); }
+        p.stroke();
+
+        // page frame + corner ticks
+        const m = 34;
+        p.strokeStyle = 'rgba(255,255,255,0.16)';
+        p.strokeRect(m + 0.5, m + 0.5, W - 2 * m, H - 2 * m);
+        p.strokeStyle = 'rgba(45,212,191,0.5)';
+        const tick = 16;
+        [[m, m], [W - m, m], [m, H - m], [W - m, H - m]].forEach(([tx, ty]) => {
+            p.beginPath();
+            p.moveTo(tx - tick / 2, ty); p.lineTo(tx + tick / 2, ty);
+            p.moveTo(tx, ty - tick / 2); p.lineTo(tx, ty + tick / 2);
+            p.stroke();
+        });
+
+        // construction geometry
+        p.strokeStyle = 'rgba(255,255,255,0.07)';
+        p.beginPath(); p.arc(W * 0.3, H * 0.4, Math.min(W, H) * 0.32, 0, Math.PI * 2); p.stroke();
+        p.beginPath(); p.arc(W * 0.72, H * 0.62, Math.min(W, H) * 0.4, 0, Math.PI * 2); p.stroke();
+        p.beginPath(); p.moveTo(0, 0); p.lineTo(W, H); p.moveTo(W, 0); p.lineTo(0, H); p.stroke();
+
+        // annotations
+        p.font = '11px "JetBrains Mono", monospace';
+        p.textBaseline = 'middle';
+        p.fillStyle = 'rgba(255,255,255,0.35)';
+        p.fillText('fig. 00 — page transition · combustion du chapitre', m + 18, m + 22);
+        p.fillStyle = 'rgba(45,212,191,0.55)';
+        p.fillText('◆ vedant.rajput — édition 2026', m + 18, H - m - 20);
+        p.fillStyle = 'rgba(255,255,255,0.28)';
+        p.textAlign = 'right';
+        p.fillText('scroll to continue ↓', W - m - 18, m + 22);
+        p.fillText('00 → 01 · sommaire', W - m - 18, H - m - 20);
+        p.textAlign = 'left';
+
+        // low-res working buffers
+        maskCv.width = bw; maskCv.height = bh;
+        fxCv.width = bw; fxCv.height = bh;
+        buf = { mask: new ImageData(bw, bh), fx: new ImageData(bw, bh) };
+    }
+
+    function resize() {
+        W = canvas.clientWidth || window.innerWidth;
+        H = canvas.clientHeight || window.innerHeight;
+        canvas.width = W;
+        canvas.height = H;
+        bw = Math.max(2, Math.round(W / RES));
+        bh = Math.max(2, Math.round(H / RES));
+        buildNoise();
+        buildPaper();
+        render();
+    }
+    // redraw crisp annotations once the mono font is ready
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => resize());
+
+    function render(now = 0) {
+        // widen the working threshold a touch so edges flicker organically
+        const t = progress * 1.05 - 0.02;
+        const md = buf.mask.data, fd = buf.fx.data;
+        const flick = Math.sin(now * 0.011) * 0.004;
+
+        for (let i = 0, n = bw * bh; i < n; i++) {
+            const j = i * 4;
+            const delta = noise[i] - t + flick;
+
+            // alpha mask: what survives of the page (soft edge into the hole)
+            md[j] = md[j + 1] = md[j + 2] = 255;
+            md[j + 3] = delta < -0.036 ? 0
+                : delta < -0.03 ? ((delta + 0.036) / 0.006) * 255
+                : 255;
+
+            // fire + char overlay
+            if (delta >= -0.03 && delta < 0) {          // white-hot ember edge
+                const k = 1 + delta / 0.03;
+                fd[j] = 255;
+                fd[j + 1] = 150 + 90 * k;
+                fd[j + 2] = 40 + 140 * k;
+                fd[j + 3] = 255;
+            } else if (delta >= 0 && delta < 0.02) {    // glowing rim just ahead
+                const k = 1 - delta / 0.02;
+                fd[j] = 255; fd[j + 1] = 130; fd[j + 2] = 35;
+                fd[j + 3] = 200 * k;
+            } else if (delta >= 0.02 && delta < 0.14) { // charring paper
+                const k = 1 - (delta - 0.02) / 0.12;
+                fd[j] = 8; fd[j + 1] = 4; fd[j + 2] = 2;
+                fd[j + 3] = 215 * k;
+            } else {
+                fd[j + 3] = 0;
+            }
+        }
+
+        maskCv.getContext('2d').putImageData(buf.mask, 0, 0);
+        fxCv.getContext('2d').putImageData(buf.fx, 0, 0);
+
+        ctx.clearRect(0, 0, W, H);
+        ctx.imageSmoothingEnabled = true;
+        // 1) the page  2) cut the burned holes  3) char + fire over what remains
+        ctx.drawImage(paperCv, 0, 0);
+        ctx.globalCompositeOperation = 'destination-in';
+        ctx.drawImage(maskCv, 0, 0, W, H);
+        ctx.globalCompositeOperation = 'source-atop';
+        ctx.drawImage(fxCv, 0, 0, W, H);
+        // 4) bloom on the embers
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = 0.4;
+        ctx.drawImage(fxCv, 0, 0, W, H);
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
+
+        // sparks rise off the burn line
+        if (progress > 0.02 && progress < 0.98) {
+            for (let s = 0; s < 3 && sparks.length < 70; s++) {
+                const x = (Math.random() * bw) | 0, y = (Math.random() * bh) | 0;
+                if (Math.abs(noise[y * bw + x] - t) < 0.01) {
+                    sparks.push({
+                        x: x * RES, y: y * RES,
+                        vx: (Math.random() - 0.5) * 0.5, vy: -0.6 - Math.random() * 1.4,
+                        life: 1,
+                    });
+                }
+            }
+        }
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = sparks.length - 1; i >= 0; i--) {
+            const s = sparks[i];
+            s.x += s.vx; s.y += s.vy; s.vy *= 0.996; s.life -= 0.012;
+            if (s.life <= 0) { sparks.splice(i, 1); continue; }
+            ctx.fillStyle = `rgba(255, ${140 + 80 * s.life | 0}, 40, ${s.life * 0.85})`;
+            ctx.fillRect(s.x, s.y, 2.4, 2.4);
+        }
+        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // expose for debugging/verification
+    window.__burn = { render: (t, now = 0) => { progress = t; render(now); } };
+
+    function loop(now) {
+        render(now);
+        rafId = inView ? requestAnimationFrame(loop) : null;
+    }
+
+    ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 0.4,
+        onUpdate: (self) => { progress = self.progress; },
+    });
+
+    new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+            inView = e.isIntersecting && !document.hidden;
+            if (inView && !rafId) rafId = requestAnimationFrame(loop);
+        });
+    }).observe(section);
+
+    window.addEventListener('resize', resize, { passive: true });
+    resize();
 })();
 
 /* ============================================================
@@ -487,10 +798,15 @@ document.addEventListener('click', (e) => {
     const toTop = document.getElementById('back-to-top');
     const toggle = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
+    const hud = document.getElementById('chapter-hud');
     const sections = [...document.querySelectorAll('section[id], header[id]')];
     const linkMap = new Map(
         [...document.querySelectorAll('.nav-link')].map((a) => [a.getAttribute('href').slice(1), a])
     );
+    const chapterFor = {
+        toc: '00 · sommaire', about: '01 · profile', skills: '02 · stack',
+        projects: '03 · selected work', experience: '04 · journey', contact: '05 · contact',
+    };
 
     let lastY = 0;
     let ticking = false;
@@ -515,6 +831,11 @@ document.addEventListener('click', (e) => {
             let current = null;
             for (const s of sections) {
                 if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) current = s.id;
+            }
+            if (hud) {
+                const label = chapterFor[current];
+                hud.classList.toggle('visible', Boolean(label));
+                if (label) hud.textContent = label;
             }
             linkMap.forEach((a, id) => {
                 const active = id === current;

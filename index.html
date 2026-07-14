@@ -122,38 +122,101 @@
         </div>
     </nav>
 
-    <!-- ============ HERO ============ -->
+    <!-- ============ HERO — the blueprint ============ -->
     <header id="hero" class="hero">
-        <div class="aurora" aria-hidden="true"><i></i><i></i></div>
         <canvas id="net-canvas" aria-hidden="true"></canvas>
+        <svg id="blueprint" aria-hidden="true" preserveAspectRatio="xMidYMid slice"></svg>
         <div class="hero-content" id="hero-content">
-            <p class="hero-kicker reveal"><span class="pulse-dot"></span> Open to a 6-month data science internship · July 2026</p>
-            <h1 class="hero-title">
-                <span class="line"><span class="line-inner">Engineering Data Pipelines</span></span>
-                <span class="line line-gradient"><span class="line-inner">Training Intelligence</span></span>
-            </h1>
-            <p class="hero-sub reveal">
-                Vedant Rajput · M.Sc. Data Science &amp; Analytics at <strong>EPITA, Paris</strong>.
-                Deep learning. Multi-agent RAG. Production MLOps.
-            </p>
+            <p class="ed-kicker mono reveal">portfolio of vedant rajput · data scientist · paris</p>
+            <h1 class="ed-title reveal">The<br>Tr<em>ai</em>ning<br>Edition</h1>
+            <p class="ed-sub reveal">Engineering data pipelines. Training intelligence.</p>
             <div class="hero-btns reveal">
-                <a href="#projects" class="btn btn-primary magnetic"><span>View Projects</span>
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                <a href="#toc" class="btn btn-primary magnetic"><span>Explore the index</span>
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m0 0-6-6m6 6 6-6"/></svg>
                 </a>
-                <a href="Vedant_Rajput_Data_Scientist_Intern_Resume.pdf" target="_blank" rel="noopener" class="btn btn-ghost magnetic"><span>Download Resume</span>
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
+                <a href="Vedant_Rajput_Data_Scientist_Intern_Resume.pdf" target="_blank" rel="noopener" class="btn btn-ghost magnetic"><span>Resume</span>
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
                 </a>
             </div>
-            <div class="hero-meta reveal">
-                <span class="meta-chip mono">Paris, France</span>
-                <span class="meta-chip mono">Python · TensorFlow · RAG · MLOps</span>
-                <span class="meta-chip mono hint">drag the network →</span>
-            </div>
+            <p class="ed-note mono reveal"><span class="pulse-dot"></span> open to a 6-month internship · july 2026 — 8 projects · deep learning · rag · mlops</p>
         </div>
-        <a href="#about" class="scroll-cue" aria-label="Scroll to about section"><span></span></a>
+        <a href="#toc" class="scroll-cue" aria-label="Scroll to index"><span></span></a>
     </header>
 
+    <!-- Marquee strip -->
+    <div class="marquee" aria-hidden="true">
+        <div class="marquee-track mono">
+            <span>Python · TensorFlow · PyTorch · Scikit-Learn · RAG · LLMs · Qdrant · Airflow 3 · MLflow · Docker · AWS · FastAPI · Great Expectations · Deep Learning · Computer Vision ·&nbsp;</span><span>Python · TensorFlow · PyTorch · Scikit-Learn · RAG · LLMs · Qdrant · Airflow 3 · MLflow · Docker · AWS · FastAPI · Great Expectations · Deep Learning · Computer Vision ·&nbsp;</span>
+        </div>
+    </div>
+
+    <!-- Burning-paper transition: the blueprint burns away, the index emerges -->
+    <div class="burn-section" id="burn" aria-hidden="true">
+        <canvas id="burn-canvas"></canvas>
+    </div>
+
     <main id="main">
+        <!-- ============ INDEX / TABLE OF CONTENTS ============ -->
+        <section id="toc" class="section toc-section">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="section-tag mono">00 · sommaire</span>
+                    <h2 class="section-title">Index.</h2>
+                </div>
+
+                <ol class="toc">
+                    <li class="stagger"><a href="#about">
+                        <span class="toc-num mono">01</span>
+                        <span class="toc-name">Profile</span>
+                        <span class="toc-desc">Who I am · languages · publication</span>
+                        <span class="toc-arrow">→</span></a>
+                    </li>
+                    <li class="stagger"><a href="#skills">
+                        <span class="toc-num mono">02</span>
+                        <span class="toc-name">Stack</span>
+                        <span class="toc-desc">Languages · AI/ML · MLOps &amp; cloud</span>
+                        <span class="toc-arrow">→</span></a>
+                    </li>
+                    <li class="stagger"><a href="#projects">
+                        <span class="toc-num mono">03</span>
+                        <span class="toc-name">Selected Work</span>
+                        <span class="toc-desc">Three flagship systems + five more</span>
+                        <span class="toc-arrow">→</span></a>
+                    </li>
+                    <li class="toc-sub stagger"><a href="#showcase-nasa">
+                        <span class="toc-num mono">03.1</span>
+                        <span class="toc-name">Helio-Forecast</span>
+                        <span class="toc-desc">Bi-LSTM on NASA solar-wind telemetry</span>
+                        <span class="toc-arrow">→</span></a>
+                    </li>
+                    <li class="toc-sub stagger"><a href="#showcase-rag">
+                        <span class="toc-num mono">03.2</span>
+                        <span class="toc-name">Compliance Engine</span>
+                        <span class="toc-desc">Multi-agent RAG over EU regulation</span>
+                        <span class="toc-arrow">→</span></a>
+                    </li>
+                    <li class="toc-sub stagger"><a href="#showcase-mlops">
+                        <span class="toc-num mono">03.3</span>
+                        <span class="toc-name">Self-Retraining Pipeline</span>
+                        <span class="toc-desc">Production MLOps on NYC taxi data</span>
+                        <span class="toc-arrow">→</span></a>
+                    </li>
+                    <li class="stagger"><a href="#experience">
+                        <span class="toc-num mono">04</span>
+                        <span class="toc-name">Journey</span>
+                        <span class="toc-desc">Experience · education · certifications</span>
+                        <span class="toc-arrow">→</span></a>
+                    </li>
+                    <li class="stagger"><a href="#contact">
+                        <span class="toc-num mono">05</span>
+                        <span class="toc-name">Contact</span>
+                        <span class="toc-desc">Hiring? My inbox is open</span>
+                        <span class="toc-arrow">→</span></a>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
         <!-- ============ ABOUT ============ -->
         <section id="about" class="section">
             <div class="container">
@@ -278,7 +341,7 @@
                     </p>
 
                     <div class="show-visual reveal" aria-hidden="true">
-                        <div class="chart-head mono">real-time space weather forecast · R²&thinsp;0.23</div>
+                        <div class="chart-head mono">fig. 01 — real-time space weather forecast · R²&thinsp;0.23</div>
                         <svg id="kp-chart" viewBox="0 0 860 320" preserveAspectRatio="none"></svg>
                         <div class="chart-legend mono">
                             <span><i class="lg lg-teal"></i>Actual NASA Kp</span>
@@ -318,6 +381,7 @@
                         every claim traced back to the exact passage in the source PDF.
                     </p>
 
+                    <div class="fig mono reveal">fig. 02 — agentic retrieval, three specialists in sequence</div>
                     <div class="pipeline reveal" id="pipeline" aria-hidden="true">
                         <div class="pipe-node"><span class="mono">01</span><strong>Internal Researcher</strong><small>hybrid Qdrant + BM25 retrieval</small></div>
                         <div class="pipe-arrow"><i></i></div>
@@ -359,6 +423,7 @@
                         duel deciding what ships.
                     </p>
 
+                    <div class="fig mono reveal">fig. 03 — the automated model lifecycle</div>
                     <div class="pipeline reveal" id="mlops-pipeline" aria-hidden="true">
                         <div class="pipe-node"><span class="mono">01</span><strong>Ingest</strong><small>scheduled Airflow 3 DAGs</small></div>
                         <div class="pipe-arrow"><i></i></div>
@@ -595,6 +660,8 @@
             </div>
         </div>
     </footer>
+
+    <div id="chapter-hud" class="mono" aria-hidden="true"></div>
 
     <button id="back-to-top" class="back-to-top" aria-label="Back to top">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>

@@ -26,8 +26,9 @@ function init() {
     const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 200);
     camera.position.z = 30;
 
+    // blueprint palette: hairline white nodes, teal reserved for signals
     const TEAL = new THREE.Color('#2dd4bf');
-    const VIOLET = new THREE.Color('#a78bfa');
+    const WHITE = new THREE.Color('#c9d4e2');
 
     /* ---------- glow sprite texture ---------- */
     function glowTexture() {
@@ -77,13 +78,13 @@ function init() {
     nodes.forEach((n, i) => {
         n.base.toArray(nodePos, i * 3);
         const isEdgeLayer = n.layer === 0 || n.layer === LAYERS.length - 1;
-        (isEdgeLayer ? VIOLET : TEAL).toArray(nodeCol, i * 3);
+        (isEdgeLayer ? TEAL : WHITE).toArray(nodeCol, i * 3);
     });
     nodeGeo.setAttribute('position', new THREE.BufferAttribute(nodePos, 3));
     nodeGeo.setAttribute('color', new THREE.BufferAttribute(nodeCol, 3));
     const nodeMat = new THREE.PointsMaterial({
-        size: 1.45, map: sprite, vertexColors: true, transparent: true,
-        opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true,
+        size: 1.1, map: sprite, vertexColors: true, transparent: true,
+        opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true,
     });
     net.add(new THREE.Points(nodeGeo, nodeMat));
 
@@ -105,7 +106,7 @@ function init() {
     const edgeGeo = new THREE.BufferGeometry();
     const edgePos = new Float32Array(edges.length * 6);
     const edgeMat = new THREE.LineBasicMaterial({
-        color: 0x7896be, transparent: true, opacity: 0.14, depthWrite: false,
+        color: 0x9fb0c6, transparent: true, opacity: 0.09, depthWrite: false,
     });
     edgeGeo.setAttribute('position', new THREE.BufferAttribute(edgePos, 3));
     net.add(new THREE.LineSegments(edgeGeo, edgeMat));
@@ -174,12 +175,12 @@ function init() {
         renderer.setSize(r.width, r.height, false);
         camera.aspect = r.width / r.height;
         camera.updateProjectionMatrix();
-        // network sits right of the copy on wide screens, centred + distant on small
+        // centred behind the small title block, receding into the void
         const wide = r.width > 900;
-        netX = wide ? 8.5 : 0;
-        camera.position.z = wide ? 30 : 44;
-        nodeMat.size = wide ? 1.45 : 1.05;
-        pulseMat.size = wide ? 2.2 : 1.6;
+        netX = 0;
+        camera.position.z = wide ? 38 : 48;
+        nodeMat.size = wide ? 1.1 : 0.9;
+        pulseMat.size = wide ? 1.8 : 1.4;
     }
     window.addEventListener('resize', resize, { passive: true });
     resize();
