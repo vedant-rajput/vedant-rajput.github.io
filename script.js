@@ -45,13 +45,86 @@ document.addEventListener('click', (e) => {
 });
 
 /* ============================================================
+   Typography utilities — hand-rolled SplitText
+   ============================================================ */
+
+/** Wrap every character of an element in .ch spans (child elements
+    are wrapped whole, so styled fragments like <em> survive). */
+function splitChars(container) {
+    const out = [];
+    [...container.childNodes].forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const frag = document.createDocumentFragment();
+            for (const ch of node.textContent) {
+                if (ch === ' ') { frag.appendChild(document.createTextNode(' ')); continue; }
+                const s = document.createElement('span');
+                s.className = 'ch';
+                s.textContent = ch;
+                out.push(s);
+                frag.appendChild(s);
+            }
+            container.replaceChild(frag, node);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const s = document.createElement('span');
+            s.className = 'ch';
+            container.replaceChild(s, node);
+            s.appendChild(node);
+            out.push(s);
+        }
+    });
+    return out;
+}
+
+/** Partition an element's content on <br> into overflow-hidden
+    mask lines; returns the inner spans to animate. */
+function maskLines(el) {
+    const groups = [[]];
+    [...el.childNodes].forEach((n) => {
+        if (n.nodeType === Node.ELEMENT_NODE && n.tagName === 'BR') groups.push([]);
+        else groups[groups.length - 1].push(n);
+    });
+    el.innerHTML = '';
+    return groups.map((nodes) => {
+        const line = document.createElement('span');
+        line.className = 'sl-line';
+        const inner = document.createElement('span');
+        inner.className = 'sl-inner';
+        nodes.forEach((n) => inner.appendChild(n));
+        line.appendChild(inner);
+        el.appendChild(line);
+        return inner;
+    });
+}
+
+/** Decode-in effect: glyph noise resolves into the final text. */
+const SCRAMBLE_GLYPHS = '█▓▒░<>{}[]=+*#·01';
+function scrambleTo(el, dur = 0.8) {
+    if (!el) return;
+    const finalText = el.dataset.finalText || (el.dataset.finalText = el.textContent);
+    const state = { p: 0 };
+    gsap.to(state, {
+        p: 1, duration: dur, ease: 'power2.out',
+        onUpdate() {
+            const reveal = Math.floor(finalText.length * state.p);
+            let s = finalText.slice(0, reveal);
+            for (let i = reveal; i < finalText.length; i++) {
+                const c = finalText[i];
+                s += c === ' ' ? ' ' : SCRAMBLE_GLYPHS[(Math.random() * SCRAMBLE_GLYPHS.length) | 0];
+            }
+            el.textContent = s;
+        },
+        onComplete() { el.textContent = finalText; },
+    });
+}
+
+/* ============================================================
    Preloader → hero intro
    ============================================================ */
 (function preloader() {
     const pre = document.getElementById('preloader');
     if (!pre) return;
 
-    const heroBits = ['.ed-kicker', '.ed-title', '.ed-sub', '.hero-btns', '.ed-note'];
+    const heroBits = ['.hero-scribble', '.ed-sub', '.avail-badge', '.hero-btns', '.ed-note'];
 
     // No GSAP / reduced motion → skip the show entirely
     if (!hasGSAP || prefersReducedMotion) {
@@ -59,30 +132,42 @@ document.addEventListener('click', (e) => {
         return;
     }
 
+    // the masthead splits into characters for the cover reveal
+    const chars = [];
+    document.querySelectorAll('#hero-title .ht-seg').forEach((seg) => chars.push(...splitChars(seg)));
+
     // Repeat visit this session → short hero intro, no counter
     if (sessionStorage.getItem('vr-seen')) {
         pre.remove();
-        gsap.from(heroBits, { opacity: 0, y: 18, duration: 0.9, stagger: 0.09, ease: EASE });
+        gsap.from(chars, { yPercent: 120, rotate: 5, duration: 0.9, stagger: 0.02, ease: 'power4.out' });
+        gsap.from(heroBits, { opacity: 0, y: 18, duration: 0.9, stagger: 0.09, ease: EASE, delay: 0.3 });
         return;
     }
     sessionStorage.setItem('vr-seen', '1');
 
     if (lenis) lenis.stop();
     const count = document.getElementById('pre-count');
+    const barFill = document.getElementById('pre-bar-fill');
     const tl = gsap.timeline({
         defaults: { ease: EASE },
         onComplete: () => { pre.remove(); if (lenis) lenis.start(); },
     });
 
     tl.from('.pre-inner', { opacity: 0, y: 14, duration: 0.45 })
+        .from('.pre-count', { opacity: 0, y: 24, duration: 0.45 }, '<0.1')
         .to({ v: 0 }, {
-            v: 100, duration: 0.9, ease: 'power2.inOut',
-            onUpdate() { count.textContent = String(Math.round(this.targets()[0].v)).padStart(2, '0'); },
+            v: 100, duration: 1.1, ease: 'power2.inOut',
+            onUpdate() {
+                const v = Math.round(this.targets()[0].v);
+                count.textContent = String(v).padStart(2, '0');
+                if (barFill) barFill.style.width = v + '%';
+            },
         })
-        .to('.pre-inner', { opacity: 0, y: -16, duration: 0.35 })
+        .to(['.pre-inner', '.pre-count'], { opacity: 0, y: -16, duration: 0.35 })
         .to(pre, { clipPath: 'inset(0 0 100% 0)', duration: 0.85, ease: 'power4.inOut' }, '-=0.05')
-        // hero intro overlaps the wipe
-        .from(heroBits, { opacity: 0, y: 24, duration: 1, stagger: 0.1 }, '-=0.5')
+        // the cover prints itself: masthead characters rise out of their masks
+        .from(chars, { yPercent: 120, rotate: 5, duration: 1.05, stagger: 0.024, ease: 'power4.out' }, '-=0.55')
+        .from(heroBits, { opacity: 0, y: 24, duration: 1, stagger: 0.1 }, '-=0.7')
         .from('#net-canvas', { opacity: 0, duration: 1.4, ease: 'power2.out' }, '-=0.9')
         .from('.scroll-cue', { opacity: 0, duration: 0.6 }, '-=0.4');
 })();
@@ -111,10 +196,10 @@ document.addEventListener('click', (e) => {
     const PHI = (1 + Math.sqrt(5)) / 2;
     const cx = W / 2, cy = H / 2;
 
-    // golden rectangle centred on the title, subdivided into squares
+    // golden-rectangle subdivision (the outer frame is omitted — its hard
+    // edge fought the rounded type; only the interior construction remains)
     const grH = 560, grW = grH * PHI;         // ≈ 906 × 560
     let x = cx - grW / 2, y = cy - grH / 2, w = grW, h = grH;
-    el('rect', { x, y, width: w, height: h });
     for (let i = 0; i < 7; i++) {
         const side = i % 4; // cut from: 0 left, 1 top, 2 right, 3 bottom
         if (side === 0) { const s = h; el('line', { x1: x + s, y1: y, x2: x + s, y2: y + h }, 'bp-dim'); x += s; w -= s; }
@@ -136,12 +221,9 @@ document.addEventListener('click', (e) => {
     }
     el('path', { d }, 'bp bp-teal');
 
-    // construction circles + diagonals, like a da Vinci plate
+    // construction circles, like a da Vinci plate
     el('circle', { cx: cx - 160, cy: cy - 210, r: 300 }, 'bp-dim');
     el('circle', { cx: cx + 180, cy: cy + 230, r: 300 }, 'bp-dim');
-    el('line', { x1: 0, y1: 0, x2: W, y2: H }, 'bp-dim');
-    el('line', { x1: W, y1: 0, x2: 0, y2: H }, 'bp-dim');
-    el('line', { x1: cx, y1: 0, x2: cx, y2: H }, 'bp-dim');
 
     if (!hasGSAP || prefersReducedMotion) return;
 
@@ -178,12 +260,48 @@ document.addEventListener('click', (e) => {
         return;
     }
 
-    // section heads + standalone reveals (hero is choreographed by the preloader)
-    [...document.querySelectorAll('.reveal')].filter((el) => !el.closest('#hero')).forEach((el) => {
-        gsap.from(el, {
-            opacity: 0, y: 34, duration: 1.1, ease: EASE,
-            scrollTrigger: { trigger: el, start: 'top 88%' },
+    // standalone reveals (hero is choreographed by the preloader; big titles
+    // and scribbles get their own treatments below)
+    [...document.querySelectorAll('.reveal')]
+        .filter((el) => !el.closest('#hero') && !el.classList.contains('show-title')
+            && !el.classList.contains('scribble'))
+        .forEach((el) => {
+            gsap.from(el, {
+                opacity: 0, y: 34, duration: 1.1, ease: EASE,
+                scrollTrigger: { trigger: el, start: 'top 88%' },
+            });
         });
+
+    // big titles rise out of masked lines
+    document.querySelectorAll('.section-title, .show-title').forEach((title) => {
+        const inners = maskLines(title);
+        gsap.from(inners, {
+            yPercent: 115, duration: 1.25, ease: 'power4.out', stagger: 0.1,
+            scrollTrigger: { trigger: title, start: 'top 86%' },
+        });
+    });
+
+    // ghost chapter numerals drift against the scroll
+    document.querySelectorAll('.ghost-num').forEach((g) => {
+        gsap.fromTo(g, { yPercent: -85 }, {
+            yPercent: -25, ease: 'none',
+            scrollTrigger: { trigger: g.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.5 },
+        });
+    });
+
+    // mono labels decode themselves on arrival
+    document.querySelectorAll('[data-scramble]').forEach((el) => {
+        if (el.closest('#hero')) return; // the hero kicker belongs to the preloader
+        ScrollTrigger.create({
+            trigger: el, start: 'top 90%', once: true,
+            onEnter: () => scrambleTo(el),
+        });
+    });
+
+    // the giant wordmark rises behind the footer
+    gsap.from('.footer-ghost', {
+        yPercent: 60, opacity: 0, duration: 1.2, ease: 'power3.out',
+        scrollTrigger: { trigger: '.footer', start: 'top 92%' },
     });
 
     // bento cards / timeline items — batched stagger
@@ -230,12 +348,16 @@ document.addEventListener('click', (e) => {
         scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true },
     });
 
-    // section tags micro-parallax
-    document.querySelectorAll('.section-tag, .show-kicker').forEach((el) => {
-        gsap.from(el, {
-            x: -18, opacity: 0, duration: 0.8, ease: EASE,
-            scrollTrigger: { trigger: el, start: 'top 92%' },
-        });
+    // handwritten annotations wipe in, left to right, like fresh ink
+    document.querySelectorAll('.scribble').forEach((el) => {
+        if (el.closest('#hero') || el.closest('#story') || el.closest('#preloader')) return;
+        gsap.fromTo(el,
+            { opacity: 0, clipPath: 'inset(-15% 100% -15% 0)' },
+            {
+                opacity: 1, clipPath: 'inset(-15% 0% -15% 0)',
+                duration: 1.1, ease: 'power2.out',
+                scrollTrigger: { trigger: el, start: 'top 92%' },
+            });
     });
 
     // CSS-state classes (language bars, pipeline lights, prediction fade)
@@ -261,237 +383,139 @@ document.addEventListener('click', (e) => {
 })();
 
 /* ============================================================
-   Burning-paper transition — a noise-threshold dissolve.
-   The page surface chars and burns away along an organic ember
-   edge as you scroll, sparks drifting up from the burn line.
+   Scroll story — the section pins while statements trade
+   places over a giant outlined ghost word
    ============================================================ */
-(function burnTransition() {
-    const canvas = document.getElementById('burn-canvas');
-    const section = document.getElementById('burn');
-    if (!canvas || !section) return;
-    if (!hasGSAP || prefersReducedMotion) { section.style.display = 'none'; return; }
+(function scrollStory() {
+    const story = document.getElementById('story');
+    const pin = document.getElementById('story-pin');
+    if (!story || !pin || !hasGSAP || prefersReducedMotion) return;
 
-    const ctx = canvas.getContext('2d');
-    const RES = 2;                     // burn simulated at 1/2 resolution
-    let W = 0, H = 0, bw = 0, bh = 0;  // display + buffer sizes
-    let noise = null;                  // Float32Array threshold field
-    let buf = null;                    // low-res mask + fx ImageData pair
-    let progress = 0;
-    let sparks = [];
-    let rafId = null;
-    let inView = false;
+    // phones keep the stacked static layout — pinning fights
+    // mobile browsers' collapsing chrome
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 768px)', () => {
+        story.classList.add('is-pinned');
+        const slides = gsap.utils.toArray('.story-slide', pin);
+        const ghost = pin.querySelector('.story-ghost');
 
-    /* --- multi-octave value noise, precomputed per resize --- */
-    function buildNoise() {
-        const cell = 46;
-        // grid sized for the highest-frequency octave (×5.1 + offsets)
-        const gw = Math.ceil((bw * 5.1 + 313) / cell) + 2;
-        const gh = Math.ceil((bh * 5.1 + 178) / cell) + 2;
-        const grid = new Float32Array(gw * gh);
-        for (let i = 0; i < grid.length; i++) grid[i] = Math.random();
-        const lerp = (a, b, t) => a + (b - a) * (t * t * (3 - 2 * t));
-
-        const sample = (x, y) => {
-            const gx = x / cell, gy = y / cell;
-            const x0 = gx | 0, y0 = gy | 0;
-            const fx = gx - x0, fy = gy - y0;
-            const i = y0 * gw + x0;
-            return lerp(
-                lerp(grid[i], grid[i + 1], fx),
-                lerp(grid[i + gw], grid[i + gw + 1], fx),
-                fy
-            );
-        };
-
-        noise = new Float32Array(bw * bh);
-        for (let y = 0; y < bh; y++) {
-            const vert = y / bh; // bias: burn starts at the top, finishes at the bottom
-            for (let x = 0; x < bw; x++) {
-                const n = sample(x, y) * 0.5 + sample(x * 2.3 + 91, y * 2.3 + 47) * 0.3
-                        + sample(x * 5.1 + 313, y * 5.1 + 178) * 0.2;
-                noise[y * bw + x] = n * 0.55 + vert * 0.45;
-            }
-        }
-    }
-
-    /* --- the burning sheet: a visible blueprint page.
-       Drawn at full resolution so its geometry and annotations are crisp;
-       the dissolve mask + fire colours are computed at low res. --- */
-    const paperCv = document.createElement('canvas');
-    const maskCv = document.createElement('canvas');
-    const fxCv = document.createElement('canvas');
-
-    function buildPaper() {
-        paperCv.width = W; paperCv.height = H;
-        const p = paperCv.getContext('2d');
-
-        // parchment tone, clearly lighter than the void behind
-        p.fillStyle = '#10141f';
-        p.fillRect(0, 0, W, H);
-
-        // grid
-        p.strokeStyle = 'rgba(255,255,255,0.05)';
-        p.lineWidth = 1;
-        p.beginPath();
-        for (let x = 0.5; x < W; x += 56) { p.moveTo(x, 0); p.lineTo(x, H); }
-        for (let y = 0.5; y < H; y += 56) { p.moveTo(0, y); p.lineTo(W, y); }
-        p.stroke();
-
-        // page frame + corner ticks
-        const m = 34;
-        p.strokeStyle = 'rgba(255,255,255,0.16)';
-        p.strokeRect(m + 0.5, m + 0.5, W - 2 * m, H - 2 * m);
-        p.strokeStyle = 'rgba(45,212,191,0.5)';
-        const tick = 16;
-        [[m, m], [W - m, m], [m, H - m], [W - m, H - m]].forEach(([tx, ty]) => {
-            p.beginPath();
-            p.moveTo(tx - tick / 2, ty); p.lineTo(tx + tick / 2, ty);
-            p.moveTo(tx, ty - tick / 2); p.lineTo(tx, ty + tick / 2);
-            p.stroke();
+        const tl = gsap.timeline({
+            defaults: { ease: 'none' },
+            scrollTrigger: {
+                trigger: story, start: 'top top',
+                end: () => '+=' + slides.length * window.innerHeight * 0.7,
+                pin, scrub: 0.5, anticipatePin: 1, invalidateOnRefresh: true,
+            },
         });
 
-        // construction geometry
-        p.strokeStyle = 'rgba(255,255,255,0.07)';
-        p.beginPath(); p.arc(W * 0.3, H * 0.4, Math.min(W, H) * 0.32, 0, Math.PI * 2); p.stroke();
-        p.beginPath(); p.arc(W * 0.72, H * 0.62, Math.min(W, H) * 0.4, 0, Math.PI * 2); p.stroke();
-        p.beginPath(); p.moveTo(0, 0); p.lineTo(W, H); p.moveTo(W, 0); p.lineTo(0, H); p.stroke();
-
-        // annotations
-        p.font = '11px "JetBrains Mono", monospace';
-        p.textBaseline = 'middle';
-        p.fillStyle = 'rgba(255,255,255,0.35)';
-        p.fillText('fig. 00 — page transition · combustion du chapitre', m + 18, m + 22);
-        p.fillStyle = 'rgba(45,212,191,0.55)';
-        p.fillText('◆ vedant.rajput — édition 2026', m + 18, H - m - 20);
-        p.fillStyle = 'rgba(255,255,255,0.28)';
-        p.textAlign = 'right';
-        p.fillText('scroll to continue ↓', W - m - 18, m + 22);
-        p.fillText('00 → 01 · sommaire', W - m - 18, H - m - 20);
-        p.textAlign = 'left';
-
-        // low-res working buffers
-        maskCv.width = bw; maskCv.height = bh;
-        fxCv.width = bw; fxCv.height = bh;
-        buf = { mask: new ImageData(bw, bh), fx: new ImageData(bw, bh) };
-    }
-
-    function resize() {
-        W = canvas.clientWidth || window.innerWidth;
-        H = canvas.clientHeight || window.innerHeight;
-        canvas.width = W;
-        canvas.height = H;
-        bw = Math.max(2, Math.round(W / RES));
-        bh = Math.max(2, Math.round(H / RES));
-        buildNoise();
-        buildPaper();
-        render();
-    }
-    // redraw crisp annotations once the mono font is ready
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => resize());
-
-    function render(now = 0) {
-        // widen the working threshold a touch so edges flicker organically
-        const t = progress * 1.05 - 0.02;
-        const md = buf.mask.data, fd = buf.fx.data;
-        const flick = Math.sin(now * 0.011) * 0.004;
-
-        for (let i = 0, n = bw * bh; i < n; i++) {
-            const j = i * 4;
-            const delta = noise[i] - t + flick;
-
-            // alpha mask: what survives of the page (soft edge into the hole)
-            md[j] = md[j + 1] = md[j + 2] = 255;
-            md[j + 3] = delta < -0.036 ? 0
-                : delta < -0.03 ? ((delta + 0.036) / 0.006) * 255
-                : 255;
-
-            // fire + char overlay
-            if (delta >= -0.03 && delta < 0) {          // white-hot ember edge
-                const k = 1 + delta / 0.03;
-                fd[j] = 255;
-                fd[j + 1] = 150 + 90 * k;
-                fd[j + 2] = 40 + 140 * k;
-                fd[j + 3] = 255;
-            } else if (delta >= 0 && delta < 0.02) {    // glowing rim just ahead
-                const k = 1 - delta / 0.02;
-                fd[j] = 255; fd[j + 1] = 130; fd[j + 2] = 35;
-                fd[j + 3] = 200 * k;
-            } else if (delta >= 0.02 && delta < 0.14) { // charring paper
-                const k = 1 - (delta - 0.02) / 0.12;
-                fd[j] = 8; fd[j + 1] = 4; fd[j + 2] = 2;
-                fd[j + 3] = 215 * k;
-            } else {
-                fd[j + 3] = 0;
+        slides.forEach((slide, i) => {
+            tl.fromTo(slide,
+                { opacity: 0, scale: 0.96, yPercent: 6 },
+                { opacity: 1, scale: 1, yPercent: 0, duration: 0.35, ease: 'power2.out' }, i);
+            if (i < slides.length - 1) {
+                tl.to(slide, { opacity: 0, scale: 1.02, yPercent: -6, duration: 0.3, ease: 'power2.in' }, i + 0.62);
             }
-        }
+        });
+        // the ghost word drifts slowly beneath the story
+        if (ghost) tl.fromTo(ghost, { xPercent: -56 }, { xPercent: -44, duration: slides.length }, 0);
 
-        maskCv.getContext('2d').putImageData(buf.mask, 0, 0);
-        fxCv.getContext('2d').putImageData(buf.fx, 0, 0);
-
-        ctx.clearRect(0, 0, W, H);
-        ctx.imageSmoothingEnabled = true;
-        // 1) the page  2) cut the burned holes  3) char + fire over what remains
-        ctx.drawImage(paperCv, 0, 0);
-        ctx.globalCompositeOperation = 'destination-in';
-        ctx.drawImage(maskCv, 0, 0, W, H);
-        ctx.globalCompositeOperation = 'source-atop';
-        ctx.drawImage(fxCv, 0, 0, W, H);
-        // 4) bloom on the embers
-        ctx.globalCompositeOperation = 'lighter';
-        ctx.globalAlpha = 0.4;
-        ctx.drawImage(fxCv, 0, 0, W, H);
-        ctx.globalAlpha = 1;
-        ctx.globalCompositeOperation = 'source-over';
-
-        // sparks rise off the burn line
-        if (progress > 0.02 && progress < 0.98) {
-            for (let s = 0; s < 3 && sparks.length < 70; s++) {
-                const x = (Math.random() * bw) | 0, y = (Math.random() * bh) | 0;
-                if (Math.abs(noise[y * bw + x] - t) < 0.01) {
-                    sparks.push({
-                        x: x * RES, y: y * RES,
-                        vx: (Math.random() - 0.5) * 0.5, vy: -0.6 - Math.random() * 1.4,
-                        life: 1,
-                    });
-                }
-            }
-        }
-        ctx.globalCompositeOperation = 'lighter';
-        for (let i = sparks.length - 1; i >= 0; i--) {
-            const s = sparks[i];
-            s.x += s.vx; s.y += s.vy; s.vy *= 0.996; s.life -= 0.012;
-            if (s.life <= 0) { sparks.splice(i, 1); continue; }
-            ctx.fillStyle = `rgba(255, ${140 + 80 * s.life | 0}, 40, ${s.life * 0.85})`;
-            ctx.fillRect(s.x, s.y, 2.4, 2.4);
-        }
-        ctx.globalCompositeOperation = 'source-over';
-    }
-
-    // expose for debugging/verification
-    window.__burn = { render: (t, now = 0) => { progress = t; render(now); } };
-
-    function loop(now) {
-        render(now);
-        rafId = inView ? requestAnimationFrame(loop) : null;
-    }
-
-    ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.4,
-        onUpdate: (self) => { progress = self.progress; },
+        return () => story.classList.remove('is-pinned');
     });
+})();
 
-    new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-            inView = e.isIntersecting && !document.hidden;
-            if (inView && !rafId) rafId = requestAnimationFrame(loop);
+/* ============================================================
+   Horizontal gallery — "More work" pins and reads sideways,
+   like flipping through the back pages of the edition
+   ============================================================ */
+(function horizontalGallery() {
+    const wrap = document.getElementById('more-work');
+    const track = document.getElementById('hs-track');
+    if (!wrap || !track || !hasGSAP || prefersReducedMotion) return;
+
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 861px)', () => {
+        wrap.classList.add('has-hscroll');
+        const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
+
+        const tween = gsap.to(track, {
+            x: () => -dist(), ease: 'none',
+            scrollTrigger: {
+                trigger: wrap, start: 'top top', end: () => '+=' + dist(),
+                pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true,
+            },
         });
-    }).observe(section);
 
-    window.addEventListener('resize', resize, { passive: true });
-    resize();
+        gsap.to('#hs-progress-fill', {
+            scaleX: 1, ease: 'none',
+            scrollTrigger: { trigger: wrap, start: 'top top', end: () => '+=' + dist(), scrub: true },
+        });
+
+        // cards introduce themselves as they arrive from the right
+        track.querySelectorAll('.hs-card').forEach((card) => {
+            gsap.from(card, {
+                y: 60, opacity: 0.15, scale: 0.95, duration: 0.9, ease: 'power3.out',
+                scrollTrigger: { trigger: card, containerAnimation: tween, start: 'left 95%', once: true },
+            });
+        });
+
+        return () => wrap.classList.remove('has-hscroll');
+    });
+})();
+
+/* ============================================================
+   Scroll-velocity FX — the page shears with momentum and the
+   marquee follows the direction and speed of the scroll
+   ============================================================ */
+(function velocityFX() {
+    if (!hasGSAP || prefersReducedMotion || !lenis) return;
+
+    const skewEls = gsap.utils.toArray('.section > .container, .showcase > .container');
+    const track = document.querySelector('.marquee-track');
+    if (track) track.style.animation = 'none'; // JS drives it from here
+
+    let skew = 0;
+    let mx = 0;
+    let dir = -1;
+
+    gsap.ticker.add((_t, dt) => {
+        const v = lenis.velocity || 0;
+
+        // subtle italic shear while the page is in motion
+        const target = gsap.utils.clamp(-2.2, 2.2, v * 0.035);
+        skew += (target - skew) * 0.12;
+        if (Math.abs(skew) > 0.02) {
+            gsap.set(skewEls, { skewY: skew });
+        } else if (skew !== 0) {
+            gsap.set(skewEls, { skewY: 0 });
+            skew = 0;
+        }
+
+        if (track) {
+            if (v > 2) dir = -1;
+            else if (v < -2) dir = 1;
+            const speed = (0.028 + Math.min(Math.abs(v) * 0.0045, 0.22)) * (dt / 16.7);
+            mx = gsap.utils.wrap(-50, 0, mx + dir * speed);
+            gsap.set(track, { xPercent: mx });
+        }
+    });
+})();
+
+/* ============================================================
+   Paris clock — the edition prints on local time
+   ============================================================ */
+(function parisClock() {
+    const el = document.getElementById('paris-time');
+    if (!el) return;
+    let fmt;
+    try {
+        fmt = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit',
+            second: '2-digit', hour12: false, timeZoneName: 'short',
+        });
+    } catch { return; }
+    const tick = () => { el.textContent = '· ' + fmt.format(new Date()); };
+    tick();
+    setInterval(tick, 1000);
 })();
 
 /* ============================================================
@@ -804,8 +828,8 @@ document.addEventListener('click', (e) => {
         [...document.querySelectorAll('.nav-link')].map((a) => [a.getAttribute('href').slice(1), a])
     );
     const chapterFor = {
-        toc: '00 · sommaire', about: '01 · profile', skills: '02 · stack',
-        projects: '03 · selected work', experience: '04 · journey', contact: '05 · contact',
+        story: '00 · the story', projects: '01 · selected work', about: '02 · profile',
+        skills: '03 · the stack', experience: '04 · journey', contact: '05 · contact',
     };
 
     let lastY = 0;

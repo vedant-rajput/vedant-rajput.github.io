@@ -26,6 +26,8 @@
     <meta name="twitter:image" content="https://vedant-rajput.github.io/assets/og.png">
 
     <link rel="preload" href="fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/baloo2-var.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/caveat-var.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
     <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
     <link rel="icon"
@@ -60,8 +62,10 @@
     <div id="preloader" aria-hidden="true">
         <div class="pre-inner">
             <span class="pre-brand"><span class="brand-mark">◆</span> vedant<span class="pre-accent">.rajput</span></span>
-            <span class="pre-count mono" id="pre-count">00</span>
+            <span class="pre-word scribble">warming up the gpus…</span>
         </div>
+        <span class="pre-count mono" id="pre-count">00</span>
+        <div class="pre-bar"><i id="pre-bar-fill"></i></div>
     </div>
 
     <!-- Custom cursor (fine pointers only) -->
@@ -92,10 +96,10 @@
             </a>
 
             <ul class="nav-links" id="nav-links">
+                <li><a href="#projects" class="nav-link">Projects</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#skills" class="nav-link">Skills</a></li>
                 <li><a href="#experience" class="nav-link">Experience</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
 
@@ -109,9 +113,6 @@
                     </a>
                     <a class="nav-icon" href="https://github.com/vedant-rajput" target="_blank" rel="noopener" aria-label="GitHub">
                         <svg width="16" height="16"><use href="#i-github"/></svg>
-                    </a>
-                    <a class="nav-icon" href="tel:+33 06 26 47 78 86" aria-label="Call +33 06 26 47 78 86">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.27a2 2 0 0 1 2.1-.45c.9.34 1.85.57 2.8.7a2 2 0 0 1 1.7 2.02Z"/></svg>
                     </a>
                 </div>
                 <a class="nav-cta" href="Vedant_Rajput_Data_Scientist_Intern_Resume.pdf" target="_blank" rel="noopener">Resume</a>
@@ -127,101 +128,271 @@
         <canvas id="net-canvas" aria-hidden="true"></canvas>
         <svg id="blueprint" aria-hidden="true" preserveAspectRatio="xMidYMid slice"></svg>
         <div class="hero-content" id="hero-content">
-            <p class="ed-kicker mono reveal">portfolio of vedant rajput · data scientist · paris</p>
-            <h1 class="ed-title reveal">The<br>Tr<em>ai</em>ning<br>Edition</h1>
-            <p class="ed-sub reveal">Engineering data pipelines. Training intelligence.</p>
+            <p class="scribble hero-scribble reveal">models are learning...</p>
+            <h1 class="ed-title" id="hero-title" aria-label="Data in. Intelligence out.">
+                <span class="ht-line" aria-hidden="true"><span class="ht-seg">Data in.</span></span>
+                <span class="ht-line ht-accent" aria-hidden="true"><span class="ht-seg">Intelligence</span></span>
+                <span class="ht-line" aria-hidden="true"><span class="ht-seg">out.</span></span>
+            </h1>
+            <p class="ed-sub reveal">
+                I'm Vedant — data scientist and M.Sc. student at EPITA, Paris. I build deep-learning
+                systems, multi-agent RAG engines and self-retraining MLOps pipelines — and I ship them.
+            </p>
+            <p class="avail-badge reveal"><span class="avail-dot"></span> open to a 6-month internship · july 2026</p>
             <div class="hero-btns reveal">
-                <a href="#toc" class="btn btn-primary magnetic"><span>Explore the index</span>
+                <a href="#projects" class="btn btn-primary magnetic"><span>Explore the work</span>
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg>
+                </a>
+                <a href="#story" class="btn btn-ghost magnetic"><span>See the story</span>
                     <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14m0 0-6-6m6 6 6-6"/></svg>
                 </a>
-                <a href="Vedant_Rajput_Data_Scientist_Intern_Resume.pdf" target="_blank" rel="noopener" class="btn btn-ghost magnetic"><span>Resume</span>
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
-                </a>
             </div>
-            <p class="ed-note mono reveal"><span class="pulse-dot"></span> open to a 6-month internship · july 2026 — 8 projects · deep learning · rag · mlops</p>
+            <p class="ed-note mono reveal">8 projects <i class="ms">✦</i> 1 publication <i class="ms">✦</i> deep learning · rag · mlops</p>
         </div>
-        <a href="#toc" class="scroll-cue" aria-label="Scroll to index"><span></span></a>
+        <a href="#story" class="scroll-cue" aria-label="Scroll to the story"><span class="mono">scroll</span><i></i></a>
     </header>
 
     <!-- Marquee strip -->
     <div class="marquee" aria-hidden="true">
-        <div class="marquee-track mono">
-            <span>Python · TensorFlow · PyTorch · Scikit-Learn · RAG · LLMs · Qdrant · Airflow 3 · MLflow · Docker · AWS · FastAPI · Great Expectations · Deep Learning · Computer Vision ·&nbsp;</span><span>Python · TensorFlow · PyTorch · Scikit-Learn · RAG · LLMs · Qdrant · Airflow 3 · MLflow · Docker · AWS · FastAPI · Great Expectations · Deep Learning · Computer Vision ·&nbsp;</span>
+        <div class="marquee-track">
+            <span>Deep Learning <i class="ms">✦</i> Multi-Agent RAG <i class="ms">✦</i> Production MLOps <i class="ms">✦</i> Computer Vision <i class="ms">✦</i> Time Series <i class="ms">✦</i> Published Research <i class="ms">✦</i> Paris, France <i class="ms">✦</i>&nbsp;</span><span>Deep Learning <i class="ms">✦</i> Multi-Agent RAG <i class="ms">✦</i> Production MLOps <i class="ms">✦</i> Computer Vision <i class="ms">✦</i> Time Series <i class="ms">✦</i> Published Research <i class="ms">✦</i> Paris, France <i class="ms">✦</i>&nbsp;</span>
         </div>
     </div>
 
-    <!-- Burning-paper transition: the blueprint burns away, the index emerges -->
-    <div class="burn-section" id="burn" aria-hidden="true">
-        <canvas id="burn-canvas"></canvas>
-    </div>
+    <!-- Scroll story: the case for shipping, told one line at a time -->
+    <section id="story" class="story" aria-label="Why production matters">
+        <div class="story-pin" id="story-pin">
+            <span class="story-ghost" aria-hidden="true">SHIPPED</span>
+
+            <div class="story-slide">
+                <p class="story-line">You clean the data. You train the model. Then it meets <span class="warm">production.</span></p>
+                <p class="scribble">where most models never arrive —</p>
+            </div>
+            <div class="story-slide">
+                <span class="story-big">87%</span>
+                <p class="story-line-sm">of machine-learning projects never make it to production.</p>
+                <p class="mono story-src">— industry estimate · vb / gartner</p>
+            </div>
+            <div class="story-slide">
+                <p class="story-line">Mine are built to <span class="accent-squiggle">ship, </span>trained, tracked, retrained.</p>
+                <p class="scribble">let's prove it ↓</p>
+            </div>
+        </div>
+    </section>
 
     <main id="main">
-        <!-- ============ INDEX / TABLE OF CONTENTS ============ -->
-        <section id="toc" class="section toc-section">
+        <!-- ============ PROJECTS ============ -->
+        <section id="projects" class="section">
             <div class="container">
-                <div class="section-head reveal">
-                    <span class="section-tag mono">00 · sommaire</span>
-                    <h2 class="section-title">Index.</h2>
+                <div class="section-head">
+                    <span class="ghost-num" aria-hidden="true">WORK</span>
+                    <p class="scribble section-scribble">the good stuff</p>
+                    <h2 class="section-title">Selected work.</h2>
                 </div>
+            </div>
 
-                <ol class="toc">
-                    <li class="stagger"><a href="#about">
-                        <span class="toc-num mono">01</span>
-                        <span class="toc-name">Profile</span>
-                        <span class="toc-desc">Who I am · languages · publication</span>
-                        <span class="toc-arrow">→</span></a>
-                    </li>
-                    <li class="stagger"><a href="#skills">
-                        <span class="toc-num mono">02</span>
-                        <span class="toc-name">Stack</span>
-                        <span class="toc-desc">Languages · AI/ML · MLOps &amp; cloud</span>
-                        <span class="toc-arrow">→</span></a>
-                    </li>
-                    <li class="stagger"><a href="#projects">
-                        <span class="toc-num mono">03</span>
-                        <span class="toc-name">Selected Work</span>
-                        <span class="toc-desc">Three flagship systems + five more</span>
-                        <span class="toc-arrow">→</span></a>
-                    </li>
-                    <li class="toc-sub stagger"><a href="#showcase-nasa">
-                        <span class="toc-num mono">03.1</span>
-                        <span class="toc-name">Helio-Forecast</span>
-                        <span class="toc-desc">Bi-LSTM on NASA solar-wind telemetry</span>
-                        <span class="toc-arrow">→</span></a>
-                    </li>
-                    <li class="toc-sub stagger"><a href="#showcase-rag">
-                        <span class="toc-num mono">03.2</span>
-                        <span class="toc-name">Compliance Engine</span>
-                        <span class="toc-desc">Multi-agent RAG over EU regulation</span>
-                        <span class="toc-arrow">→</span></a>
-                    </li>
-                    <li class="toc-sub stagger"><a href="#showcase-mlops">
-                        <span class="toc-num mono">03.3</span>
-                        <span class="toc-name">Self-Retraining Pipeline</span>
-                        <span class="toc-desc">Production MLOps on NYC taxi data</span>
-                        <span class="toc-arrow">→</span></a>
-                    </li>
-                    <li class="stagger"><a href="#experience">
-                        <span class="toc-num mono">04</span>
-                        <span class="toc-name">Journey</span>
-                        <span class="toc-desc">Experience · education · certifications</span>
-                        <span class="toc-arrow">→</span></a>
-                    </li>
-                    <li class="stagger"><a href="#contact">
-                        <span class="toc-num mono">05</span>
-                        <span class="toc-name">Contact</span>
-                        <span class="toc-desc">Hiring? My inbox is open</span>
-                        <span class="toc-arrow">→</span></a>
-                    </li>
-                </ol>
+            <!-- Flagship 1: NASA -->
+            <div class="showcase" id="showcase-nasa">
+                <div class="container">
+                    <p class="scribble show-scribble reveal">storm chasing, with tensors</p>
+                    <h3 class="show-title reveal">Storms, forecast<br>three hours early.</h3>
+                    <p class="show-sub reveal">
+                        A bidirectional LSTM reads NASA satellite telemetry and predicts geomagnetic storms before
+                        they reach Earth — trained on 24+ months of OMNIWeb data with physics-informed features.
+                    </p>
+
+                    <div class="show-visual reveal" aria-hidden="true">
+                        <div class="chart-head mono">fig. 01 — real-time space weather forecast · R²&thinsp;0.23</div>
+                        <svg id="kp-chart" viewBox="0 0 860 320" preserveAspectRatio="none"></svg>
+                        <div class="chart-legend mono">
+                            <span><i class="lg lg-teal"></i>Actual NASA Kp</span>
+                            <span><i class="lg lg-violet"></i>Predicted Kp (AI)</span>
+                        </div>
+                    </div>
+
+                    <div class="show-stats">
+                        <div class="show-stat stagger">
+                            <span class="big-num">R²&thinsp;0.23</span>
+                            <span class="big-label">held-out test published operational baselines run 0.15–0.28</span>
+                        </div>
+                        <div class="show-stat stagger">
+                            <span class="big-num">+15%</span>
+                            <span class="big-label">energy-transfer signal from Eyring-Energy features (V×Bz)</span>
+                        </div>
+                        <div class="show-stat stagger">
+                            <span class="big-num">24&thinsp;mo</span>
+                            <span class="big-label">of satellite time series, ingested and imputed by a custom ETL</span>
+                        </div>
+                    </div>
+
+                    <a class="show-link reveal" href="https://github.com/vedant-rajput/NASA-s-Helio-Forecast-Geomagnetic-Storm-Prediction-via-Deep-Learning-on-Solar-Wind-Telemetry"
+                        target="_blank" rel="noopener">
+                        <svg width="17" height="17"><use href="#i-github"/></svg><span>View on GitHub</span><em>→</em>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Flagship 2: RAG -->
+            <div class="showcase band" id="showcase-rag">
+                <div class="container">
+                    <p class="scribble show-scribble reveal">three agents walk into a regulation…</p>
+                    <h3 class="show-title reveal">Three agents.<br>One source of Truth.</h3>
+                    <p class="show-sub reveal">
+                        A compliance engine that answers questions across the EU AI Act, GDPR and NIST AI RMF
+                        every claim traced back to the exact passage in the source PDF.
+                    </p>
+
+                    <div class="fig mono reveal" data-scramble>fig. 02 — agentic retrieval, three specialists in sequence</div>
+                    <div class="pipeline reveal" id="pipeline" aria-hidden="true">
+                        <div class="pipe-node"><span class="mono">01</span><strong>Internal Researcher</strong><small>hybrid Qdrant + BM25 retrieval</small></div>
+                        <div class="pipe-arrow"><i></i></div>
+                        <div class="pipe-node"><span class="mono">02</span><strong>External Fact-Checker</strong><small>live web via DuckDuckGo / FastMCP</small></div>
+                        <div class="pipe-arrow"><i></i></div>
+                        <div class="pipe-node"><span class="mono">03</span><strong>Synthesizer</strong><small>grounded, source-highlighted answer</small></div>
+                    </div>
+
+                    <div class="show-stats">
+                        <div class="show-stat hero-stat stagger">
+                            <span class="big-num grad">100%</span>
+                            <span class="big-label">generation accuracy on a hand-labeled 20-question benchmark</span>
+                        </div>
+                        <div class="show-stat stagger">
+                            <span class="big-num">2,758</span>
+                            <span class="big-label">semantic chunks from 280 pages / 1M+ characters of regulation</span>
+                        </div>
+                        <div class="show-stat stagger">
+                            <span class="big-num">Top-8</span>
+                            <span class="big-label">chunks after Reciprocal Rank Fusion and LLM listwise re-ranking</span>
+                        </div>
+                    </div>
+
+                    <a class="show-link reveal" href="https://github.com/vedant-rajput/European-AI-Regulatory-Compliance-Engine-Multi-Agent-RAG"
+                        target="_blank" rel="noopener">
+                        <svg width="17" height="17"><use href="#i-github"/></svg><span>View on GitHub</span><em>→</em>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Flagship 3: MLOps -->
+            <div class="showcase" id="showcase-mlops">
+                <div class="container">
+                    <p class="scribble show-scribble reveal">the model retrains while you sleep</p>
+                    <h3 class="show-title reveal">Models that<br>retrain themselves.</h3>
+                    <p class="show-sub reveal">
+                        A production-grade taxi-fare prediction system that treats the model as a living component —
+                        ingestion to deployment, with data contracts guarding every batch and a Champion–Challenger
+                        duel deciding what ships.
+                    </p>
+
+                    <div class="fig mono reveal" data-scramble>fig. 03 — the automated model lifecycle</div>
+                    <div class="pipeline reveal" id="mlops-pipeline" aria-hidden="true">
+                        <div class="pipe-node"><span class="mono">01</span><strong>Ingest</strong><small>scheduled Airflow 3 DAGs</small></div>
+                        <div class="pipe-arrow"><i></i></div>
+                        <div class="pipe-node"><span class="mono">02</span><strong>Validate</strong><small>Great Expectations data contracts</small></div>
+                        <div class="pipe-arrow"><i></i></div>
+                        <div class="pipe-node"><span class="mono">03</span><strong>Train &amp; Track</strong><small>MLflow · Champion vs Challenger</small></div>
+                        <div class="pipe-arrow"><i></i></div>
+                        <div class="pipe-node"><span class="mono">04</span><strong>Serve</strong><small>FastAPI in Docker</small></div>
+                    </div>
+
+                    <div class="show-stats">
+                        <div class="show-stat stagger">
+                            <span class="big-num">0</span>
+                            <span class="big-label">manual steps between data ingestion and a deployed model</span>
+                        </div>
+                        <div class="show-stat stagger">
+                            <span class="big-num">100%</span>
+                            <span class="big-label">of incoming batches validated against data contracts before inference</span>
+                        </div>
+                        <div class="show-stat stagger">
+                            <span class="big-num">24/7</span>
+                            <span class="big-label">Airflow DAGs monitor performance and trigger retraining on degradation</span>
+                        </div>
+                    </div>
+
+                    <a class="show-link reveal" href="https://github.com/vedant-rajput/taxi-fair-prediction"
+                        target="_blank" rel="noopener">
+                        <svg width="17" height="17"><use href="#i-github"/></svg><span>View on GitHub</span><em>→</em>
+                    </a>
+                </div>
+            </div>
+
+            <!-- The grid — pinned horizontal gallery on desktop, bento fallback elsewhere -->
+            <div class="more-work" id="more-work">
+                <div class="container hs-head">
+                    <h3 class="more-title reveal">More work</h3>
+                    <div class="hs-progress" aria-hidden="true"><i id="hs-progress-fill"></i></div>
+                </div>
+                <div class="bento projects-bento hs-track" id="hs-track">
+                    <article class="hs-intro" aria-hidden="true">
+                        <span class="scribble">the b-sides</span>
+                        <span class="hs-intro-title">five more<br>experiments</span>
+                        <span class="hs-hint mono">keep scrolling →</span>
+                    </article>
+                    <article class="card project hs-card">
+                        <div class="proj-top">
+                            <span class="proj-cat mono">computer vision</span>
+                            <a class="proj-link" href="https://github.com/vedant-rajput/MRI-Brain-Tumor-Classification-using-Hybrid-VGG16-NADE-Model" target="_blank" rel="noopener" aria-label="View MRI classification on GitHub">
+                                <svg width="18" height="18"><use href="#i-github"/></svg>
+                            </a>
+                        </div>
+                        <h3 class="proj-title">MRI tumor classification, 90% → 97%</h3>
+                        <p>Hybrid VGG16-NADE architecture for brain-scan diagnostics. Peer-reviewed and published at
+                            ICIRTCS-23.</p>
+                        <div class="tags"><span>VGG16</span><span>NADE</span><span>Transfer Learning</span></div>
+                    </article>
+
+                    <article class="card project hs-card">
+                        <div class="proj-top">
+                            <span class="proj-cat mono">privacy</span>
+                            <a class="proj-link" href="https://github.com/vedant-rajput/FHE-Fully-Homomorphic-Encryption-with-Zama-and-concrete-ML" target="_blank" rel="noopener" aria-label="View FHE project on GitHub">
+                                <svg width="18" height="18"><use href="#i-github"/></svg>
+                            </a>
+                        </div>
+                        <h3 class="proj-title">Inference on encrypted data</h3>
+                        <p>Fully homomorphic encryption with Zama's Concrete ML the model predicts malignancy
+                            without ever seeing plaintext.</p>
+                        <div class="tags"><span>FHE</span><span>Concrete ML</span><span>Quantization</span></div>
+                    </article>
+
+                    <article class="card project hs-card">
+                        <div class="proj-top">
+                            <span class="proj-cat mono">quant</span>
+                            <a class="proj-link" href="https://github.com/vedant-rajput/Decentralized-Bittensor-TAO-Analysis" target="_blank" rel="noopener" aria-label="View Bittensor analysis on GitHub">
+                                <svg width="18" height="18"><use href="#i-github"/></svg>
+                            </a>
+                        </div>
+                        <h3 class="proj-title">Bittensor staking, quantified</h3>
+                        <p>Live metagraph analytics on the TAO network plotting the efficient frontier of
+                            decentralised AI subnets.</p>
+                        <div class="tags"><span>Bittensor</span><span>Efficient Frontier</span></div>
+                    </article>
+
+                    <article class="card project hs-card">
+                        <div class="proj-top"><span class="proj-cat mono">healthcare</span></div>
+                        <h3 class="proj-title">Patient-data threat mitigation</h3>
+                        <p>Differential privacy, pseudonymisation and genomic masking (ARX) with consent workflows
+                            and encrypted audit logs.</p>
+                        <div class="tags"><span>Differential Privacy</span><span>ARX</span></div>
+                    </article>
+
+                    <article class="card project hs-card">
+                        <div class="proj-top"><span class="proj-cat mono">iot</span></div>
+                        <h3 class="proj-title">Sewage-gas early warning</h3>
+                        <p>MQ-series sensors on a microcontroller detect H₂S and CH₄ in real time and trigger
+                            SMS/email alerts.</p>
+                        <div class="tags"><span>Sensors</span><span>Embedded</span></div>
+                    </article>
+                </div>
             </div>
         </section>
 
         <!-- ============ ABOUT ============ -->
-        <section id="about" class="section">
+        <section id="about" class="section band">
             <div class="container">
-                <div class="section-head reveal">
-                    <span class="section-tag mono">01 · profile</span>
+                <div class="section-head">
+                    <span class="ghost-num" aria-hidden="true">PROFILE</span>
+                    <p class="scribble section-scribble">who's behind the models</p>
                     <h2 class="section-title">Data, end to end.</h2>
                 </div>
 
@@ -274,10 +445,11 @@
         </section>
 
         <!-- ============ SKILLS ============ -->
-        <section id="skills" class="section band">
+        <section id="skills" class="section">
             <div class="container">
-                <div class="section-head reveal">
-                    <span class="section-tag mono">02 · stack</span>
+                <div class="section-head">
+                    <span class="ghost-num" aria-hidden="true">STACK</span>
+                    <p class="scribble section-scribble">the arsenal</p>
                     <h2 class="section-title">The toolkit.</h2>
                 </div>
 
@@ -321,208 +493,12 @@
             </div>
         </section>
 
-        <!-- ============ PROJECTS ============ -->
-        <section id="projects" class="section">
-            <div class="container">
-                <div class="section-head reveal">
-                    <span class="section-tag mono">03 · portfolio</span>
-                    <h2 class="section-title">Selected work.</h2>
-                </div>
-            </div>
-
-            <!-- Flagship 1: NASA -->
-            <div class="showcase" id="showcase-nasa">
-                <div class="container">
-                    <p class="show-kicker mono reveal">Featured · Deep learning on solar-wind telemetry</p>
-                    <h3 class="show-title reveal">Storms, forecast<br>three hours early.</h3>
-                    <p class="show-sub reveal">
-                        A bidirectional LSTM reads NASA satellite telemetry and predicts geomagnetic storms before
-                        they reach Earth — trained on 24+ months of OMNIWeb data with physics-informed features.
-                    </p>
-
-                    <div class="show-visual reveal" aria-hidden="true">
-                        <div class="chart-head mono">fig. 01 — real-time space weather forecast · R²&thinsp;0.23</div>
-                        <svg id="kp-chart" viewBox="0 0 860 320" preserveAspectRatio="none"></svg>
-                        <div class="chart-legend mono">
-                            <span><i class="lg lg-teal"></i>Actual NASA Kp</span>
-                            <span><i class="lg lg-violet"></i>Predicted Kp (AI)</span>
-                        </div>
-                    </div>
-
-                    <div class="show-stats">
-                        <div class="show-stat stagger">
-                            <span class="big-num">R²&thinsp;0.23</span>
-                            <span class="big-label">held-out test published operational baselines run 0.15–0.28</span>
-                        </div>
-                        <div class="show-stat stagger">
-                            <span class="big-num">+15%</span>
-                            <span class="big-label">energy-transfer signal from Eyring-Energy features (V×Bz)</span>
-                        </div>
-                        <div class="show-stat stagger">
-                            <span class="big-num">24&thinsp;mo</span>
-                            <span class="big-label">of satellite time series, ingested and imputed by a custom ETL</span>
-                        </div>
-                    </div>
-
-                    <a class="show-link reveal" href="https://github.com/vedant-rajput/NASA-s-Helio-Forecast-Geomagnetic-Storm-Prediction-via-Deep-Learning-on-Solar-Wind-Telemetry"
-                        target="_blank" rel="noopener">
-                        <svg width="17" height="17"><use href="#i-github"/></svg><span>View on GitHub</span><em>→</em>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Flagship 2: RAG -->
-            <div class="showcase band" id="showcase-rag">
-                <div class="container">
-                    <p class="show-kicker mono reveal">Featured · Multi-agent RAG over EU regulation</p>
-                    <h3 class="show-title reveal">Three agents.<br>One source of Truth.</h3>
-                    <p class="show-sub reveal">
-                        A compliance engine that answers questions across the EU AI Act, GDPR and NIST AI RMF
-                        every claim traced back to the exact passage in the source PDF.
-                    </p>
-
-                    <div class="fig mono reveal">fig. 02 — agentic retrieval, three specialists in sequence</div>
-                    <div class="pipeline reveal" id="pipeline" aria-hidden="true">
-                        <div class="pipe-node"><span class="mono">01</span><strong>Internal Researcher</strong><small>hybrid Qdrant + BM25 retrieval</small></div>
-                        <div class="pipe-arrow"><i></i></div>
-                        <div class="pipe-node"><span class="mono">02</span><strong>External Fact-Checker</strong><small>live web via DuckDuckGo / FastMCP</small></div>
-                        <div class="pipe-arrow"><i></i></div>
-                        <div class="pipe-node"><span class="mono">03</span><strong>Synthesizer</strong><small>grounded, source-highlighted answer</small></div>
-                    </div>
-
-                    <div class="show-stats">
-                        <div class="show-stat hero-stat stagger">
-                            <span class="big-num grad">100%</span>
-                            <span class="big-label">generation accuracy on a hand-labeled 20-question benchmark</span>
-                        </div>
-                        <div class="show-stat stagger">
-                            <span class="big-num">2,758</span>
-                            <span class="big-label">semantic chunks from 280 pages / 1M+ characters of regulation</span>
-                        </div>
-                        <div class="show-stat stagger">
-                            <span class="big-num">Top-8</span>
-                            <span class="big-label">chunks after Reciprocal Rank Fusion and LLM listwise re-ranking</span>
-                        </div>
-                    </div>
-
-                    <a class="show-link reveal" href="https://github.com/vedant-rajput/European-AI-Regulatory-Compliance-Engine-Multi-Agent-RAG"
-                        target="_blank" rel="noopener">
-                        <svg width="17" height="17"><use href="#i-github"/></svg><span>View on GitHub</span><em>→</em>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Flagship 3: MLOps -->
-            <div class="showcase" id="showcase-mlops">
-                <div class="container">
-                    <p class="show-kicker mono reveal">featured · production mlops on nyc taxi data</p>
-                    <h3 class="show-title reveal">Models that<br>retrain themselves.</h3>
-                    <p class="show-sub reveal">
-                        A production-grade taxi-fare prediction system that treats the model as a living component —
-                        ingestion to deployment, with data contracts guarding every batch and a Champion–Challenger
-                        duel deciding what ships.
-                    </p>
-
-                    <div class="fig mono reveal">fig. 03 — the automated model lifecycle</div>
-                    <div class="pipeline reveal" id="mlops-pipeline" aria-hidden="true">
-                        <div class="pipe-node"><span class="mono">01</span><strong>Ingest</strong><small>scheduled Airflow 3 DAGs</small></div>
-                        <div class="pipe-arrow"><i></i></div>
-                        <div class="pipe-node"><span class="mono">02</span><strong>Validate</strong><small>Great Expectations data contracts</small></div>
-                        <div class="pipe-arrow"><i></i></div>
-                        <div class="pipe-node"><span class="mono">03</span><strong>Train &amp; Track</strong><small>MLflow · Champion vs Challenger</small></div>
-                        <div class="pipe-arrow"><i></i></div>
-                        <div class="pipe-node"><span class="mono">04</span><strong>Serve</strong><small>FastAPI in Docker</small></div>
-                    </div>
-
-                    <div class="show-stats">
-                        <div class="show-stat stagger">
-                            <span class="big-num">0</span>
-                            <span class="big-label">manual steps between data ingestion and a deployed model</span>
-                        </div>
-                        <div class="show-stat stagger">
-                            <span class="big-num">100%</span>
-                            <span class="big-label">of incoming batches validated against data contracts before inference</span>
-                        </div>
-                        <div class="show-stat stagger">
-                            <span class="big-num">24/7</span>
-                            <span class="big-label">Airflow DAGs monitor performance and trigger retraining on degradation</span>
-                        </div>
-                    </div>
-
-                    <a class="show-link reveal" href="https://github.com/vedant-rajput/taxi-fair-prediction"
-                        target="_blank" rel="noopener">
-                        <svg width="17" height="17"><use href="#i-github"/></svg><span>View on GitHub</span><em>→</em>
-                    </a>
-                </div>
-            </div>
-
-            <!-- The grid -->
-            <div class="container more-work">
-                <h3 class="more-title reveal">More work</h3>
-                <div class="bento projects-bento">
-                    <article class="card project stagger">
-                        <div class="proj-top">
-                            <span class="proj-cat mono">computer vision</span>
-                            <a class="proj-link" href="https://github.com/vedant-rajput/MRI-Brain-Tumor-Classification-using-Hybrid-VGG16-NADE-Model" target="_blank" rel="noopener" aria-label="View MRI classification on GitHub">
-                                <svg width="18" height="18"><use href="#i-github"/></svg>
-                            </a>
-                        </div>
-                        <h3 class="proj-title">MRI tumor classification, 90% → 97%</h3>
-                        <p>Hybrid VGG16-NADE architecture for brain-scan diagnostics. Peer-reviewed and published at
-                            ICIRTCS-23.</p>
-                        <div class="tags"><span>VGG16</span><span>NADE</span><span>Transfer Learning</span></div>
-                    </article>
-
-                    <article class="card project stagger">
-                        <div class="proj-top">
-                            <span class="proj-cat mono">privacy</span>
-                            <a class="proj-link" href="https://github.com/vedant-rajput/FHE-Fully-Homomorphic-Encryption-with-Zama-and-concrete-ML" target="_blank" rel="noopener" aria-label="View FHE project on GitHub">
-                                <svg width="18" height="18"><use href="#i-github"/></svg>
-                            </a>
-                        </div>
-                        <h3 class="proj-title">Inference on encrypted data</h3>
-                        <p>Fully homomorphic encryption with Zama's Concrete ML the model predicts malignancy
-                            without ever seeing plaintext.</p>
-                        <div class="tags"><span>FHE</span><span>Concrete ML</span><span>Quantization</span></div>
-                    </article>
-
-                    <article class="card project stagger">
-                        <div class="proj-top">
-                            <span class="proj-cat mono">quant</span>
-                            <a class="proj-link" href="https://github.com/vedant-rajput/Decentralized-Bittensor-TAO-Analysis" target="_blank" rel="noopener" aria-label="View Bittensor analysis on GitHub">
-                                <svg width="18" height="18"><use href="#i-github"/></svg>
-                            </a>
-                        </div>
-                        <h3 class="proj-title">Bittensor staking, quantified</h3>
-                        <p>Live metagraph analytics on the TAO network plotting the efficient frontier of
-                            decentralised AI subnets.</p>
-                        <div class="tags"><span>Bittensor</span><span>Efficient Frontier</span></div>
-                    </article>
-
-                    <article class="card project stagger">
-                        <div class="proj-top"><span class="proj-cat mono">healthcare</span></div>
-                        <h3 class="proj-title">Patient-data threat mitigation</h3>
-                        <p>Differential privacy, pseudonymisation and genomic masking (ARX) with consent workflows
-                            and encrypted audit logs.</p>
-                        <div class="tags"><span>Differential Privacy</span><span>ARX</span></div>
-                    </article>
-
-                    <article class="card project stagger">
-                        <div class="proj-top"><span class="proj-cat mono">iot</span></div>
-                        <h3 class="proj-title">Sewage-gas early warning</h3>
-                        <p>MQ-series sensors on a microcontroller detect H₂S and CH₄ in real time and trigger
-                            SMS/email alerts.</p>
-                        <div class="tags"><span>Sensors</span><span>Embedded</span></div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
         <!-- ============ EXPERIENCE ============ -->
         <section id="experience" class="section band">
             <div class="container">
-                <div class="section-head reveal">
-                    <span class="section-tag mono">04 · journey</span>
+                <div class="section-head">
+                    <span class="ghost-num" aria-hidden="true">JOURNEY</span>
+                    <p class="scribble section-scribble">the road to paris</p>
                     <h2 class="section-title">The path here.</h2>
                 </div>
 
@@ -553,12 +529,12 @@
                             <article class="tl-item card stagger">
                                 <span class="tl-date mono">2025 — 2027 · Paris</span>
                                 <h4>M.Sc. Data Science &amp; Analytics</h4>
-                                <p class="tl-org">EPITA — École des ingénieurs en informatique</p>
+                                <p class="tl-org">EPITA - École des ingénieurs en informatique</p>
                             </article>
                             <article class="tl-item card stagger">
                                 <span class="tl-date mono">2020 — 2024 · Hyderabad</span>
                                 <h4>B.Tech Computer Science &amp; Engineering</h4>
-                                <p class="tl-org">JNTUH — St. Martin's Engineering College</p>
+                                <p class="tl-org">JNTUH - Jawaharlal Nehru Technological University Hyderabad</p>
                             </article>
                         </div>
                     </div>
@@ -583,9 +559,9 @@
         <!-- ============ CONTACT ============ -->
         <section id="contact" class="section">
             <div class="container">
-                <div class="section-head reveal">
-                    <span class="section-tag mono">05 · connect</span>
-                    <h2 class="section-title">Let's build something.</h2>
+                <div class="section-head section-head-center">
+                    <p class="scribble section-scribble">your move, human —</p>
+                    <h2 class="section-title">Let's build <span class="accent-squiggle">something.</span></h2>
                 </div>
 
                 <div class="contact-grid">
@@ -604,9 +580,6 @@
                             <li><a href="https://github.com/vedant-rajput" target="_blank" rel="noopener" class="contact-link">
                                 <svg width="18" height="18"><use href="#i-github"/></svg>
                                 <span>github.com/vedant-rajput</span></a></li>
-                            <li><a href="tel:+33 0626477886" class="contact-link">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.7 2.8a2 2 0 0 1-.45 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.27a2 2 0 0 1 2.1-.45c.9.34 1.85.57 2.8.7a2 2 0 0 1 1.7 2.02Z"/></svg>
-                                <span>+33 06 26 47 78 86</span></a></li>
                         </ul>
                     </div>
 
@@ -641,6 +614,7 @@
 
     <!-- ============ FOOTER ============ -->
     <footer class="footer">
+        <span class="footer-ghost" aria-hidden="true">VEDANT&nbsp;RAJPUT</span>
         <div class="container">
             <div class="terminal card" aria-hidden="true">
                 <div class="terminal-bar">
@@ -652,11 +626,8 @@
 
             <div class="footer-row">
                 <span class="mono footer-brand">◆ vedant.rajput</span>
-                <nav class="footer-nav" aria-label="Footer">
-                    <a href="#about">About</a><a href="#skills">Skills</a><a href="#experience">Experience</a>
-                    <a href="#projects">Projects</a><a href="#contact">Contact</a>
-                </nav>
-                <span class="mono footer-copy">© 2026 Vedant Rajput</span>
+                <span class="mono footer-tag">built in paris · trained on data</span>
+                <span class="mono footer-copy">© 2026 <span id="paris-time"></span></span>
             </div>
         </div>
     </footer>

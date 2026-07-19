@@ -23,11 +23,13 @@ function init() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x05070d, 0.009); // depth falls away into the void
     const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 200);
     camera.position.z = 30;
 
     // blueprint palette: hairline white nodes, teal reserved for signals
     const TEAL = new THREE.Color('#2dd4bf');
+    const VIOLET = new THREE.Color('#a78bfa');
     const WHITE = new THREE.Color('#c9d4e2');
 
     /* ---------- glow sprite texture ---------- */
@@ -111,7 +113,7 @@ function init() {
     edgeGeo.setAttribute('position', new THREE.BufferAttribute(edgePos, 3));
     net.add(new THREE.LineSegments(edgeGeo, edgeMat));
 
-    // signal pulses travelling along random synapses
+    // signal pulses travelling along random synapses (mostly teal, a few violet)
     const PULSES = 22;
     const pulses = Array.from({ length: PULSES }, () => ({
         edge: (Math.random() * edges.length) | 0,
@@ -120,12 +122,24 @@ function init() {
     }));
     const pulseGeo = new THREE.BufferGeometry();
     const pulsePos = new Float32Array(PULSES * 3);
+    const pulseCol = new Float32Array(PULSES * 3);
+    for (let i = 0; i < PULSES; i++) {
+        (Math.random() < 0.25 ? VIOLET : TEAL).toArray(pulseCol, i * 3);
+    }
     pulseGeo.setAttribute('position', new THREE.BufferAttribute(pulsePos, 3));
+    pulseGeo.setAttribute('color', new THREE.BufferAttribute(pulseCol, 3));
     const pulseMat = new THREE.PointsMaterial({
-        size: 2.2, map: sprite, color: TEAL, transparent: true,
+        size: 2.2, map: sprite, vertexColors: true, transparent: true,
         opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true,
     });
     net.add(new THREE.Points(pulseGeo, pulseMat));
+
+    // construction cage: a da Vinci wireframe encasing the intelligence
+    const cage = new THREE.LineSegments(
+        new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(17, 1)),
+        new THREE.LineBasicMaterial({ color: 0x2dd4bf, transparent: true, opacity: 0.05, depthWrite: false })
+    );
+    scene.add(cage);
 
     // ambient stardust for depth
     const DUST = 260;
@@ -187,9 +201,13 @@ function init() {
 
     /* ---------- loop ---------- */
     let rafId = null;
+    let lastScrollY = window.scrollY;
 
     function frame(now) {
         const t = now * 0.001;
+
+        // nodes breathe in brightness as well as position
+        nodeMat.opacity = 0.5 + Math.sin(t * 0.9) * 0.08;
 
         // node breathing (positions drift on tiny lissajous orbits)
         for (let i = 0; i < nodes.length; i++) {
@@ -224,6 +242,12 @@ function init() {
         }
         pulseGeo.attributes.position.needsUpdate = true;
 
+        // scroll momentum feeds the spin — the network wakes as you move
+        const sy = window.scrollY;
+        const sv = sy - lastScrollY;
+        lastScrollY = sy;
+        spin.vy = Math.max(-0.02, Math.min(0.02, spin.vy + sv * 0.0000045));
+
         // spin: gentle auto-rotation + drag inertia
         if (!dragging) spin.vy += (0.0016 - spin.vy) * 0.02;
         spin.y += spin.vy;
@@ -231,6 +255,11 @@ function init() {
         net.rotation.x += (spin.x - net.rotation.x) * 0.08;
         net.position.x += (netX - net.position.x) * 0.05;
         net.position.y = Math.sin(t * 0.35) * 0.6;
+
+        // the cage counter-rotates, slow and deliberate
+        cage.rotation.y -= 0.0009;
+        cage.rotation.x = Math.sin(t * 0.12) * 0.25;
+        cage.position.y = net.position.y * 0.6;
 
         // camera parallax toward the pointer; scroll pulls the rig up & away
         const scroll = Math.min(window.scrollY / window.innerHeight, 1.2);
