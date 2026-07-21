@@ -4,6 +4,9 @@
  * Glowing layered nodes, low-opacity synapses, signal pulses travelling
  * between layers. Mouse moves the camera, drag spins the network,
  * scrolling pulls you gently away from it.
+ *
+ * Tech: Three.js (WebGLRenderer, EdgesGeometry cage, FogExp2, additive
+ * points) + vanilla rAF; scroll velocity feeds the spin.
  */
 
 import * as THREE from 'three';

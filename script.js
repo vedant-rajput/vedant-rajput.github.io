@@ -18,6 +18,7 @@ if (hasGSAP) gsap.registerPlugin(ScrollTrigger);
 
 /* ============================================================
    Smooth scrolling (Lenis) — skipped for reduced motion
+   Tech: Lenis + GSAP ticker (rAF-synced)
    ============================================================ */
 let lenis = null;
 if (hasGSAP && !prefersReducedMotion && typeof Lenis !== 'undefined') {
@@ -46,6 +47,7 @@ document.addEventListener('click', (e) => {
 
 /* ============================================================
    Typography utilities — hand-rolled SplitText
+   Tech: Vanilla DOM — splitChars, maskLines, scramble decode
    ============================================================ */
 
 /** Wrap every character of an element in .ch spans (child elements
@@ -119,6 +121,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Preloader → hero intro
+   Tech: GSAP timeline (counter, clip-path wipe) + custom SplitText per-char masks
    ============================================================ */
 (function preloader() {
     const pre = document.getElementById('preloader');
@@ -176,6 +179,7 @@ function scrambleTo(el, dur = 0.8) {
    Blueprint — Renaissance construction geometry in the hero.
    Golden-rectangle subdivision, a logarithmic spiral, circles
    and diagonals, all hairlines, drawn in on load.
+   Tech: SVG + GSAP stroke-dashoffset draw-on + pointer parallax
    ============================================================ */
 (function blueprint() {
     const svg = document.getElementById('blueprint');
@@ -252,6 +256,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Scroll choreography (GSAP) — falls back to visible content
+   Tech: GSAP ScrollTrigger — batch stagger, masked-line reveals, scrambles, counters
    ============================================================ */
 (function choreography() {
     if (!hasGSAP || prefersReducedMotion) {
@@ -385,6 +390,7 @@ function scrambleTo(el, dur = 0.8) {
 /* ============================================================
    Scroll story — the section pins while statements trade
    places over a giant outlined ghost word
+   Tech: GSAP timeline + ScrollTrigger pin & scrub, gated by gsap.matchMedia (>=768px)
    ============================================================ */
 (function scrollStory() {
     const story = document.getElementById('story');
@@ -426,6 +432,7 @@ function scrambleTo(el, dur = 0.8) {
 /* ============================================================
    Horizontal gallery — "More work" pins and reads sideways,
    like flipping through the back pages of the edition
+   Tech: GSAP ScrollTrigger pin + containerAnimation (vertical scroll -> horizontal)
    ============================================================ */
 (function horizontalGallery() {
     const wrap = document.getElementById('more-work');
@@ -465,6 +472,7 @@ function scrambleTo(el, dur = 0.8) {
 /* ============================================================
    Scroll-velocity FX — the page shears with momentum and the
    marquee follows the direction and speed of the scroll
+   Tech: Lenis scroll velocity + GSAP ticker (skew + marquee drive)
    ============================================================ */
 (function velocityFX() {
     if (!hasGSAP || prefersReducedMotion || !lenis) return;
@@ -502,6 +510,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Paris clock — the edition prints on local time
+   Tech: Vanilla JS — Intl.DateTimeFormat, setInterval
    ============================================================ */
 (function parisClock() {
     const el = document.getElementById('paris-time');
@@ -520,6 +529,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Ambient background particles (constellation)
+   Tech: Canvas 2D + requestAnimationFrame (constellation + cursor repel)
    ============================================================ */
 (function backgroundParticles() {
     const canvas = document.getElementById('bg-canvas');
@@ -604,6 +614,7 @@ function scrambleTo(el, dur = 0.8) {
 /* ============================================================
    NASA showcase: actual vs predicted Kp — the observed line
    is drawn by your scroll position (scrubbed)
+   Tech: SVG path-length draw + GSAP ScrollTrigger scrub
    ============================================================ */
 (function kpChart() {
     const svg = document.getElementById('kp-chart');
@@ -705,6 +716,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    3D card tilt + cursor-tracked sheen
+   Tech: GSAP quickTo 3D rotation + CSS cursor-tracked radial sheen
    ============================================================ */
 (function cardTilt() {
     const cards = document.querySelectorAll('.card:not(.contact-form):not(.terminal)');
@@ -739,6 +751,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Magnetic buttons
+   Tech: GSAP quickTo + elastic.out spring-back
    ============================================================ */
 (function magnetic() {
     if (!hasGSAP || prefersReducedMotion || !finePointer) return;
@@ -761,6 +774,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Custom cursor — dot leads, ring follows; labels over links
+   Tech: GSAP quickSetter/quickTo (dot leads, ring trails)
    ============================================================ */
 (function cursor() {
     if (!hasGSAP || prefersReducedMotion || !finePointer) return;
@@ -815,6 +829,7 @@ function scrambleTo(el, dur = 0.8) {
 /* ============================================================
    Nav chrome: shrink, hide-on-scroll-down, active link,
    progress bar, mobile menu, back-to-top
+   Tech: Vanilla rAF scroll + GSAP nav hide/show, scroll-progress, active link
    ============================================================ */
 (function chrome() {
     const navbar = document.getElementById('navbar');
@@ -891,6 +906,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Footer terminal — typed system log + rotating quotes
+   Tech: Vanilla JS typed-log via chained setTimeout
    ============================================================ */
 (function terminal() {
     const body = document.getElementById('terminal-body');
@@ -957,6 +973,7 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Contact form (Web3Forms)
+   Tech: GSAP timeline send-FX (plane + light sweep) + Web3Forms fetch
    ============================================================ */
 (function contactForm() {
     const form = document.getElementById('contact-form');
