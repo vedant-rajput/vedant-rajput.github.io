@@ -1,5 +1,5 @@
 /* ============================================================
-   Vedant Rajput — Portfolio
+   Vedant Rajput - Portfolio
    Deep Obsidian · layered depth · big type · quiet chrome
    ============================================================ */
 
@@ -18,7 +18,7 @@
     font-style: normal;
     font-display: swap;
 }
-/* rounded display face — every headline */
+/* rounded display face - every headline */
 @font-face {
     font-family: 'Baloo 2';
     src: url('fonts/baloo2-var.woff2') format('woff2');
@@ -36,7 +36,7 @@
 }
 
 :root {
-    /* Obsidian surfaces — depth from layers, not borders */
+    /* Obsidian surfaces - depth from layers, not borders */
     --bg: #05070d;
     --bg-band: #0a0e18;
     --glass: rgba(255, 255, 255, 0.04);
@@ -128,9 +128,12 @@ a { color: inherit; text-decoration: none; }
 }
 .skip-link:focus { top: 14px; }
 
-/* ============ Ambient background ============ */
+/* ============ Ambient background ============
+   Stacked behind all content (the opaque body bg propagates to the root
+   canvas, below these negative-z layers): grid, constellation, then the
+   ASCII flow field on top as the signature texture. */
 .bg-grid {
-    position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    position: fixed; inset: 0; z-index: -3; pointer-events: none;
     background-image:
         linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
@@ -139,9 +142,21 @@ a { color: inherit; text-decoration: none; }
     -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 40%, transparent 100%);
 }
 
+/* constellation dimmed so the ASCII field leads the two textures */
 #bg-canvas {
+    position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    opacity: 0.22;
+}
+
+/* ASCII flow field - global ambient texture, the machine reading the data.
+   Fixed behind every section; script.js eases its opacity down as
+   text-heavy sections arrive so copy always stays legible. */
+#ascii-canvas {
     position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.42;
+    /* soft full-bleed vignette so the screen edges never cut hard */
+    mask-image: radial-gradient(ellipse 108% 108% at 50% 46%, #000 60%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 108% 108% at 50% 46%, #000 60%, transparent 100%);
 }
 
 /* Film grain kills banding on the dark gradients */
@@ -158,7 +173,7 @@ a { color: inherit; text-decoration: none; }
     background: linear-gradient(90deg, var(--teal), var(--cyan));
 }
 
-/* ============ Nav — small and quiet, like it should be ============ */
+/* ============ Nav - small and quiet, like it should be ============ */
 .navbar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     height: var(--nav-h);
@@ -244,7 +259,7 @@ a { color: inherit; text-decoration: none; }
     overflow: hidden;
 }
 
-/* Blueprint construction geometry (populated by script.js) —
+/* Blueprint construction geometry (populated by script.js) -
    dimmed to a whisper so it doesn't fight the rounded type */
 #blueprint {
     position: absolute; inset: 0; width: 100%; height: 100%;
@@ -350,7 +365,7 @@ a { color: inherit; text-decoration: none; }
 
 .btn { padding: 12px 26px; font-size: 0.88rem; }
 
-/* ============ Marquee strip — bold, ✦-punctuated ============ */
+/* ============ Marquee strip - bold, ✦-punctuated ============ */
 .marquee {
     overflow: hidden; white-space: nowrap;
     border-top: 1px solid rgba(255, 255, 255, 0.09);
@@ -371,16 +386,24 @@ a { color: inherit; text-decoration: none; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 
-/* ============ Scroll story — pinned statements over a ghost word ============
+/* ============ Scroll story - pinned statements over a ghost word ============
    Static, stacked layout by default (no-JS / reduced motion); script.js adds
    .is-pinned and choreographs the slides. */
-.story { position: relative; background: var(--bg); }
+/* transparent so the global ASCII field shows through the story */
+.story { position: relative; background: transparent; }
 .story-pin {
     position: relative; overflow: hidden;
     padding: 10vh 0;
 }
+/* soft pool of ground under the statements so type always beats the field */
+.story-pin::after {
+    content: ''; position: absolute; inset: 0; z-index: 2;
+    background: radial-gradient(ellipse 48% 40% at 50% 50%,
+                rgba(5, 7, 13, 0.88) 0%, rgba(5, 7, 13, 0.6) 45%, transparent 72%);
+    pointer-events: none;
+}
 .story-ghost {
-    position: absolute; top: 50%; left: 50%;
+    position: absolute; top: 50%; left: 50%; z-index: 1;
     transform: translate(-50%, -50%);
     font-family: var(--font-display); font-weight: 800;
     font-size: clamp(6rem, 24vw, 22rem); line-height: 1;
@@ -390,7 +413,7 @@ a { color: inherit; text-decoration: none; }
     pointer-events: none; user-select: none;
 }
 .story-slide {
-    position: relative;
+    position: relative; z-index: 3;
     min-height: 46vh;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 18px;
@@ -476,7 +499,7 @@ a { color: inherit; text-decoration: none; }
     100% { transform: scaleY(1); opacity: 0; }
 }
 
-/* ============ Sections — generous air, alternating bands ============ */
+/* ============ Sections - generous air, alternating bands ============ */
 .section { padding: 140px 0; position: relative; }
 .section.band, .showcase.band {
     background: linear-gradient(180deg, rgba(10, 14, 24, 0) 0%, rgba(10, 14, 24, 0.9) 8%,
@@ -494,7 +517,7 @@ a { color: inherit; text-decoration: none; }
 .section-head-center { text-align: center; }
 .section-head-center .section-scribble { transform: rotate(-1.2deg); }
 
-/* masked line reveals for big titles (wrapped by script.js) —
+/* masked line reveals for big titles (wrapped by script.js) -
    generous bottom padding so descenders and squiggles survive the clip */
 .sl-line { display: block; overflow: hidden; padding: 0.12em 0.04em 0.38em; margin: -0.12em -0.04em -0.38em; }
 .sl-inner { display: block; will-change: transform; }
@@ -511,7 +534,7 @@ a { color: inherit; text-decoration: none; }
     pointer-events: none; user-select: none;
 }
 
-/* ============ Cards — blueprint hairline panels ============ */
+/* ============ Cards - blueprint hairline panels ============ */
 .card {
     position: relative;
     background: rgba(255, 255, 255, 0.015);
@@ -594,7 +617,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ============ Flagship showcases ============ */
 .showcase { padding: 120px 0; }
-/* the section head introduces the first showcase — keep them together */
+/* the section head introduces the first showcase - keep them together */
 #projects .section-head { margin-bottom: 0; }
 #showcase-nasa { padding-top: 48px; }
 .show-scribble { margin-bottom: 16px; transform: rotate(-1.2deg); }
@@ -657,7 +680,7 @@ a { color: inherit; text-decoration: none; }
 .show-link em { font-style: normal; transition: transform 0.4s var(--ease); }
 .show-link:hover em { transform: translateX(5px); }
 
-/* RAG pipeline diagram — lights up in sequence when in view */
+/* RAG pipeline diagram - lights up in sequence when in view */
 .pipeline {
     display: flex; align-items: stretch; gap: 0;
     margin-bottom: 64px;
@@ -716,7 +739,7 @@ a { color: inherit; text-decoration: none; }
     100% { opacity: 0; transform: translateX(40px); }
 }
 
-/* "More work" — bento grid by default; script.js upgrades it to a
+/* "More work" - bento grid by default; script.js upgrades it to a
    pinned horizontal gallery on wide screens (.has-hscroll) */
 .more-work { margin-top: 40px; }
 .more-title {
@@ -774,7 +797,7 @@ a { color: inherit; text-decoration: none; }
     transition: color 0.35s var(--ease), transform 0.35s var(--ease);
 }
 .proj-link:hover { color: var(--teal); transform: scale(1.12); }
-/* card-level headings stay Inter — the display font is reserved
+/* card-level headings stay Inter - the display font is reserved
    for the big moments so both keep their character */
 .proj-title { font-size: 1.18rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; }
 .project p { flex: 1; font-size: 0.93rem; }
@@ -1085,7 +1108,7 @@ html.lenis, html.lenis body { height: auto; }
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-    #bg-canvas, .scroll-cue, .aurora, #preloader, .cursor-dot, .cursor-ring { display: none !important; }
+    #bg-canvas, #ascii-canvas, .scroll-cue, .aurora, #preloader, .cursor-dot, .cursor-ring { display: none !important; }
     .pipe-node { opacity: 1; transform: none; }
     #kp-chart .kp-pred { opacity: 1; }
     .has-hscroll { min-height: 0; display: block; }
@@ -1097,7 +1120,7 @@ html.lenis, html.lenis body { height: auto; }
 @media print {
     .navbar, .scroll-progress, #bg-canvas, .bg-grid, .grain, .aurora, #net-canvas,
     .scroll-cue, .hero-btns, .terminal, .back-to-top, .contact-form, .skip-link,
-    #preloader, .cursor-dot, .cursor-ring, .story-ghost, .footer-ghost,
+    #preloader, .cursor-dot, .cursor-ring, .story-ghost, .footer-ghost, #ascii-canvas,
     .ghost-num, .hs-intro, .hs-progress { display: none !important; }
     .ed-title { color: #000; }
     .scribble, .story-big, .ht-accent .ht-seg, .accent-squiggle { color: #333; background: none; }

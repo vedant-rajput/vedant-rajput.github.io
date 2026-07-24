@@ -1,5 +1,5 @@
 /**
- * Vedant Rajput — Portfolio
+ * Vedant Rajput - Portfolio
  * Three.js hero: a 3D neural network floating in space.
  * Glowing layered nodes, low-opacity synapses, signal pulses travelling
  * between layers. Mouse moves the camera, drag spins the network,
@@ -245,7 +245,7 @@ function init() {
         }
         pulseGeo.attributes.position.needsUpdate = true;
 
-        // scroll momentum feeds the spin — the network wakes as you move
+        // scroll momentum feeds the spin - the network wakes as you move
         const sy = window.scrollY;
         const sv = sy - lastScrollY;
         lastScrollY = sy;

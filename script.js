@@ -1,5 +1,5 @@
 /**
- * Vedant Rajput — Portfolio
+ * Vedant Rajput - Portfolio
  * Motion system: Lenis smooth scroll + GSAP/ScrollTrigger choreography,
  * preloader, custom cursor, 3D card tilt, magnetic buttons, scrubbed
  * chart drawing, ambient particles, footer terminal, contact form.
@@ -17,7 +17,7 @@ const EASE = 'power3.out';
 if (hasGSAP) gsap.registerPlugin(ScrollTrigger);
 
 /* ============================================================
-   Smooth scrolling (Lenis) — skipped for reduced motion
+   Smooth scrolling (Lenis) - skipped for reduced motion
    Tech: Lenis + GSAP ticker (rAF-synced)
    ============================================================ */
 let lenis = null;
@@ -46,8 +46,8 @@ document.addEventListener('click', (e) => {
 });
 
 /* ============================================================
-   Typography utilities — hand-rolled SplitText
-   Tech: Vanilla DOM — splitChars, maskLines, scramble decode
+   Typography utilities - hand-rolled SplitText
+   Tech: Vanilla DOM - splitChars, maskLines, scramble decode
    ============================================================ */
 
 /** Wrap every character of an element in .ch spans (child elements
@@ -176,7 +176,7 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   Blueprint — Renaissance construction geometry in the hero.
+   Blueprint - Renaissance construction geometry in the hero.
    Golden-rectangle subdivision, a logarithmic spiral, circles
    and diagonals, all hairlines, drawn in on load.
    Tech: SVG + GSAP stroke-dashoffset draw-on + pointer parallax
@@ -200,7 +200,7 @@ function scrambleTo(el, dur = 0.8) {
     const PHI = (1 + Math.sqrt(5)) / 2;
     const cx = W / 2, cy = H / 2;
 
-    // golden-rectangle subdivision (the outer frame is omitted — its hard
+    // golden-rectangle subdivision (the outer frame is omitted - its hard
     // edge fought the rounded type; only the interior construction remains)
     const grH = 560, grW = grH * PHI;         // ≈ 906 × 560
     let x = cx - grW / 2, y = cy - grH / 2, w = grW, h = grH;
@@ -255,8 +255,8 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   Scroll choreography (GSAP) — falls back to visible content
-   Tech: GSAP ScrollTrigger — batch stagger, masked-line reveals, scrambles, counters
+   Scroll choreography (GSAP) - falls back to visible content
+   Tech: GSAP ScrollTrigger - batch stagger, masked-line reveals, scrambles, counters
    ============================================================ */
 (function choreography() {
     if (!hasGSAP || prefersReducedMotion) {
@@ -309,7 +309,7 @@ function scrambleTo(el, dur = 0.8) {
         scrollTrigger: { trigger: '.footer', start: 'top 92%' },
     });
 
-    // bento cards / timeline items — batched stagger
+    // bento cards / timeline items - batched stagger
     ScrollTrigger.batch('.stagger', {
         start: 'top 90%',
         once: true,
@@ -388,7 +388,7 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   Scroll story — the section pins while statements trade
+   Scroll story - the section pins while statements trade
    places over a giant outlined ghost word
    Tech: GSAP timeline + ScrollTrigger pin & scrub, gated by gsap.matchMedia (>=768px)
    ============================================================ */
@@ -397,7 +397,7 @@ function scrambleTo(el, dur = 0.8) {
     const pin = document.getElementById('story-pin');
     if (!story || !pin || !hasGSAP || prefersReducedMotion) return;
 
-    // phones keep the stacked static layout — pinning fights
+    // phones keep the stacked static layout - pinning fights
     // mobile browsers' collapsing chrome
     const mm = gsap.matchMedia();
     mm.add('(min-width: 768px)', () => {
@@ -430,7 +430,143 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   Horizontal gallery — "More work" pins and reads sideways,
+   ASCII flow field - global ambient texture. A viewport-fixed
+   monospace grid where every glyph points along a noise-driven
+   vector field, clustering into drifting shoals; the whole layer
+   eases transparent as text-heavy sections scroll in, so copy
+   always stays legible. The cursor blooms the field open.
+   Tech: Canvas 2D + value-noise flow field, throttled rAF,
+         GSAP ScrollTrigger opacity dim over #main
+   ============================================================ */
+(function asciiField() {
+    const canvas = document.getElementById('ascii-canvas');
+    if (!canvas || prefersReducedMotion) return;
+
+    const ctx = canvas.getContext('2d');
+    const CELL = 14;                 // px per glyph cell
+    const FRAME_MS = 1000 / 26;      // terminal-ish refresh; far cheaper than 60fps
+    const DIRS = ['>', '/', '^', '\\', '<', '/', 'v', '\\'];  // 8-way compass
+    const FAINT = ['·', '.', ':'];                            // sparse background texture
+    const BUCKETS = 5;               // alpha tiers, batched to keep fillStyle churn low
+    const FULL = 0.42, DIM = 0.12;   // layer opacity: showcased vs. behind text
+
+    /* --- value noise: one hash grid, bilinear + smoothstep --- */
+    const N = 256;
+    const seed = new Float32Array(N * N);
+    for (let i = 0; i < seed.length; i++) seed[i] = Math.random();
+    const smooth = (t) => t * t * (3 - 2 * t);
+    function noise(x, y) {
+        const xi = Math.floor(x), yi = Math.floor(y);
+        const xf = smooth(x - xi), yf = smooth(y - yi);
+        const x0 = xi & 255, x1 = (xi + 1) & 255;
+        const y0 = (yi & 255) * N, y1 = ((yi + 1) & 255) * N;
+        const a = seed[y0 + x0], b = seed[y0 + x1];
+        const top = a + (b - a) * xf;
+        const bot = seed[y1 + x0] + (seed[y1 + x1] - seed[y1 + x0]) * xf;
+        return top + (bot - top) * yf;
+    }
+
+    const layers = Array.from({ length: BUCKETS }, () => []);
+    const pointer = { x: -9999, y: -9999 };
+    let W = 0, H = 0, cols = 0, rows = 0;
+    let rafId = null, running = false, last = 0;
+
+    function resize() {
+        W = window.innerWidth; H = window.innerHeight;
+        if (!W || !H) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL);
+        const mono = getComputedStyle(document.documentElement)
+            .getPropertyValue('--font-mono').trim() || 'monospace';
+        ctx.font = `${CELL - 3}px ${mono}`;
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+    }
+
+    function render(now) {
+        const t = now * 0.00012;
+        for (const l of layers) l.length = 0;
+
+        for (let gy = 0; gy < rows; gy++) {
+            for (let gx = 0; gx < cols; gx++) {
+                // density mask - low-frequency shoals drifting sideways
+                let d = noise(gx * 0.035 + t * 1.4, gy * 0.05 - t * 0.5) * 0.65
+                      + noise(gx * 0.11 - t, gy * 0.13) * 0.35;
+
+                const px = gx * CELL + CELL / 2;
+                const py = gy * CELL + CELL / 2;
+
+                // the cursor blooms the field open around it
+                const dx = px - pointer.x, dy = py - pointer.y;
+                const d2 = dx * dx + dy * dy;
+                if (d2 < 34000) d += (1 - d2 / 34000) * 0.42;
+
+                if (d < 0.42) continue;                       // empty space
+                const b = Math.min(1, (d - 0.42) / 0.4);
+
+                let ch;
+                if (b < 0.28) {
+                    ch = FAINT[(gx + gy) % 3];
+                } else {
+                    const ang = noise(gx * 0.045 - t * 0.9, gy * 0.045 + t * 0.4) * Math.PI * 4;
+                    ch = DIRS[(((ang / (Math.PI * 2)) * 8) | 0) & 7];
+                }
+                const arr = layers[Math.min(BUCKETS - 1, (b * BUCKETS) | 0)];
+                arr.push(ch, px, py);
+            }
+        }
+
+        ctx.clearRect(0, 0, W, H);
+        for (let i = 0; i < BUCKETS; i++) {
+            const arr = layers[i];
+            if (!arr.length) continue;
+            const a = 0.1 + (i / (BUCKETS - 1)) * 0.5;
+            // the densest tier picks up the site's teal; the rest stay cool grey
+            ctx.fillStyle = i === BUCKETS - 1
+                ? `rgba(45, 212, 191, ${a})`
+                : `rgba(190, 210, 220, ${a})`;
+            for (let k = 0; k < arr.length; k += 3) ctx.fillText(arr[k], arr[k + 1], arr[k + 2]);
+        }
+    }
+
+    function loop(now) {
+        if (now - last >= FRAME_MS) { last = now; render(now); }
+        rafId = running ? requestAnimationFrame(loop) : null;
+    }
+    function start() { if (!running) { running = true; if (!rafId) rafId = requestAnimationFrame(loop); } }
+    function stop() { running = false; }
+
+    window.addEventListener('pointermove', (e) => {
+        pointer.x = e.clientX; pointer.y = e.clientY;   // fixed canvas → viewport coords
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => { document.hidden ? stop() : start(); });
+    window.addEventListener('resize', resize, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(resize);
+    resize();
+    start();
+
+    // fade the whole layer down once the text-heavy content begins and hold it
+    // there to the page bottom; only the hero and story show the field full.
+    // Keyed to crossing the story→content boundary (not the page end), so the
+    // last section and footer stay dim instead of brightening at max scroll.
+    if (hasGSAP) {
+        const main = document.getElementById('main');
+        if (main) {
+            const fade = (o) => gsap.to(canvas, { opacity: o, duration: 0.6, ease: 'power2.out', overwrite: true });
+            ScrollTrigger.create({
+                trigger: main, start: 'top center', end: 'bottom bottom',
+                onEnter: () => fade(DIM),        // scrolled down into the content
+                onLeaveBack: () => fade(FULL),   // scrolled back up into the story
+            });
+        }
+    }
+})();
+
+/* ============================================================
+   Horizontal gallery - "More work" pins and reads sideways,
    like flipping through the back pages of the edition
    Tech: GSAP ScrollTrigger pin + containerAnimation (vertical scroll -> horizontal)
    ============================================================ */
@@ -470,7 +606,7 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   Scroll-velocity FX — the page shears with momentum and the
+   Scroll-velocity FX - the page shears with momentum and the
    marquee follows the direction and speed of the scroll
    Tech: Lenis scroll velocity + GSAP ticker (skew + marquee drive)
    ============================================================ */
@@ -509,8 +645,8 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   Paris clock — the edition prints on local time
-   Tech: Vanilla JS — Intl.DateTimeFormat, setInterval
+   Paris clock - the edition prints on local time
+   Tech: Vanilla JS - Intl.DateTimeFormat, setInterval
    ============================================================ */
 (function parisClock() {
     const el = document.getElementById('paris-time');
@@ -612,7 +748,7 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   NASA showcase: actual vs predicted Kp — the observed line
+   NASA showcase: actual vs predicted Kp - the observed line
    is drawn by your scroll position (scrubbed)
    Tech: SVG path-length draw + GSAP ScrollTrigger scrub
    ============================================================ */
@@ -634,7 +770,7 @@ function scrambleTo(el, dur = 0.8) {
         return n;
     };
 
-    // Actual NASA Kp — quantized steps: [hour the value starts, Kp]
+    // Actual NASA Kp - quantized steps: [hour the value starts, Kp]
     const actual = [
         [0, 1.3], [3, 1.7], [10, 2], [13, 2.3], [16, 3], [19, 2], [21, 1.7], [26, 2.7],
         [29, 2.3], [30, 2.7], [31, 1.7], [34, 3], [37, 2.7], [40, 0.7], [43, 2], [46, 1.3],
@@ -646,7 +782,7 @@ function scrambleTo(el, dur = 0.8) {
         [181, 2], [183, 2.7], [186, 4], [189, 2.3], [192, 3.7], [195, 3], [198, 3.3],
     ];
 
-    // Predicted Kp (AI) — smooth curve keypoints
+    // Predicted Kp (AI) - smooth curve keypoints
     const predicted = [
         [0, 2.35], [5, 2.6], [7, 2.7], [10, 2.5], [13, 2.3], [15, 2.15], [18, 2.7],
         [20, 2.85], [23, 2.9], [26, 3.1], [28, 2.9], [30, 2.8], [32, 2.9], [34, 3.0],
@@ -773,7 +909,7 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   Custom cursor — dot leads, ring follows; labels over links
+   Custom cursor - dot leads, ring follows; labels over links
    Tech: GSAP quickSetter/quickTo (dot leads, ring trails)
    ============================================================ */
 (function cursor() {
@@ -905,7 +1041,7 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   Footer terminal — typed system log + rotating quotes
+   Footer terminal - typed system log + rotating quotes
    Tech: Vanilla JS typed-log via chained setTimeout
    ============================================================ */
 (function terminal() {
@@ -914,25 +1050,25 @@ function scrambleTo(el, dur = 0.8) {
 
     const bootAt = Date.now();
     const quotes = [
-        '"In God we trust. All others must bring data." — W. E. Deming',
-        '"All models are wrong, but some are useful." — G. Box',
+        '"In God we trust. All others must bring data." - W. E. Deming',
+        '"All models are wrong, but some are useful." - G. Box',
         '"Data is the new oil, but refined models are the engine."',
-        '"Torture the data, and it will confess to anything." — R. Coase',
-        '"The goal is to turn data into information, and information into insight." — C. Fiorina',
-        '"The world is one big data problem." — Andrew McAfee',
-        '"Without data, you\'re just another person with an opinion." — W. Edwards Deming',
-        '"Data is a precious thing and will last longer than the systems themselves." — T. Berners-Lee',
-        '"In God we trust, all others bring data." — W. Edwards Deming',
-        '"Data is like garbage. You\'d better know what you are going to do with it before you collect it." — M. Loukides',
-        '"The most valuable commodity I know of is information." — G. Moore',
-        '"Data is the sword of the 21st century, those who wield it well, the samurai." — J. Rosenberg',
-        '"Big data is at the foundation of all the megatrends that are happening." — E. Schmidt',
-        '"Data is a tool for enhancing intuition." — H. Davenport',
-        '"The purpose of computing is insight, not numbers." — R. Tukey',
-        '"Data beats emotions." — S. Jobs',
-        '"Data is the new science. Big Data holds the answers." — Pat Gelsinger',
-        '"Data is a precious thing and will last longer than the systems themselves." — Tim Berners-Lee',
-        '"The goal is to turn data into information, and information into insight." — Carly Fiorina',
+        '"Torture the data, and it will confess to anything." - R. Coase',
+        '"The goal is to turn data into information, and information into insight." - C. Fiorina',
+        '"The world is one big data problem." - Andrew McAfee',
+        '"Without data, you\'re just another person with an opinion." - W. Edwards Deming',
+        '"Data is a precious thing and will last longer than the systems themselves." - T. Berners-Lee',
+        '"In God we trust, all others bring data." - W. Edwards Deming',
+        '"Data is like garbage. You\'d better know what you are going to do with it before you collect it." - M. Loukides',
+        '"The most valuable commodity I know of is information." - G. Moore',
+        '"Data is the sword of the 21st century, those who wield it well, the samurai." - J. Rosenberg',
+        '"Big data is at the foundation of all the megatrends that are happening." - E. Schmidt',
+        '"Data is a tool for enhancing intuition." - H. Davenport',
+        '"The purpose of computing is insight, not numbers." - R. Tukey',
+        '"Data beats emotions." - S. Jobs',
+        '"Data is the new science. Big Data holds the answers." - Pat Gelsinger',
+        '"Data is a precious thing and will last longer than the systems themselves." - Tim Berners-Lee',
+        '"The goal is to turn data into information, and information into insight." - Carly Fiorina',
     ];
 
     function uptime() {
@@ -1024,14 +1160,14 @@ function scrambleTo(el, dur = 0.8) {
             });
             const data = await res.json();
             if (data.success) {
-                status.textContent = '✓ message received — I\'ll get back to you soon.';
+                status.textContent = '✓ message received - I\'ll get back to you soon.';
                 form.reset();
             } else {
                 throw new Error(data.message || 'submission failed');
             }
         } catch {
             status.classList.add('error');
-            status.textContent = '✗ something went wrong — email me directly at vedantt.rajput@gmail.com';
+            status.textContent = '✗ something went wrong - email me directly at vedantt.rajput@gmail.com';
         } finally {
             btn.disabled = false;
         }

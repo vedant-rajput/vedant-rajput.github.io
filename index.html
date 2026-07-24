@@ -4,23 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vedant Rajput — Data Scientist</title>
+    <title>Vedant Rajput - Data Scientist</title>
     <meta name="description"
-        content="Vedant Rajput — Data Scientist. Engineering data pipelines, training intelligence. M.Sc. Data Science & Analytics at EPITA, Paris.">
+        content="Vedant Rajput - Data Scientist. Engineering data pipelines, training intelligence. M.Sc. Data Science & Analytics at EPITA, Paris.">
     <meta name="theme-color" content="#05070d">
     <link rel="canonical" href="https://vedant-rajput.github.io/">
 
     <!-- Open Graph / social previews -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://vedant-rajput.github.io/">
-    <meta property="og:title" content="Vedant Rajput — Data Scientist">
+    <meta property="og:title" content="Vedant Rajput - Data Scientist">
     <meta property="og:description"
-        content="Engineering data pipelines. Training intelligence. Deep learning, multi-agent RAG and production MLOps — M.Sc. Data Science & Analytics at EPITA, Paris.">
+        content="Engineering data pipelines. Training intelligence. Deep learning, multi-agent RAG and production MLOps - M.Sc. Data Science & Analytics at EPITA, Paris.">
     <meta property="og:image" content="https://vedant-rajput.github.io/assets/og.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Vedant Rajput — Data Scientist">
+    <meta name="twitter:title" content="Vedant Rajput - Data Scientist">
     <meta name="twitter:description"
         content="Engineering data pipelines. Training intelligence. Deep learning, multi-agent RAG and production MLOps.">
     <meta name="twitter:image" content="https://vedant-rajput.github.io/assets/og.png">
@@ -79,9 +79,10 @@
         </symbol>
     </svg>
 
-    <!-- Ambient background: grid + particle field + grain -->
+    <!-- Ambient background: grid + particle field + ASCII flow field + grain -->
     <div class="bg-grid" aria-hidden="true"></div>
     <canvas id="bg-canvas" aria-hidden="true"></canvas>
+    <canvas id="ascii-canvas" aria-hidden="true"></canvas>
     <div class="grain" aria-hidden="true"></div>
 
     <!-- Scroll progress -->
@@ -123,7 +124,7 @@
         </div>
     </nav>
 
-    <!-- ============ HERO — the blueprint ============ -->
+    <!-- ============ HERO - the blueprint ============ -->
     <header id="hero" class="hero">
         <canvas id="net-canvas" aria-hidden="true"></canvas>
         <svg id="blueprint" aria-hidden="true" preserveAspectRatio="xMidYMid slice"></svg>
@@ -135,8 +136,8 @@
                 <span class="ht-line" aria-hidden="true"><span class="ht-seg">out.</span></span>
             </h1>
             <p class="ed-sub reveal">
-                I'm Vedant — data scientist and M.Sc. student at EPITA, Paris. I build deep-learning
-                systems, multi-agent RAG engines and self-retraining MLOps pipelines — and I ship them.
+                I'm Vedant - data scientist and M.Sc. student at EPITA, Paris. I build deep-learning
+                systems, multi-agent RAG engines and self-retraining MLOps pipelines - and I ship them.
             </p>
             <p class="avail-badge reveal"><span class="avail-dot"></span> open to a 6-month internship · july 2026</p>
             <div class="hero-btns reveal">
@@ -166,12 +167,12 @@
 
             <div class="story-slide">
                 <p class="story-line">You clean the data. You train the model. Then it meets <span class="warm">production.</span></p>
-                <p class="scribble">where most models never arrive —</p>
+                <p class="scribble">where most models never arrive -</p>
             </div>
             <div class="story-slide">
                 <span class="story-big">87%</span>
                 <p class="story-line-sm">of machine-learning projects never make it to production.</p>
-                <p class="mono story-src">— industry estimate · vb / gartner</p>
+                <p class="mono story-src">- industry estimate · vb / gartner</p>
             </div>
             <div class="story-slide">
                 <p class="story-line">Mine are built to <span class="accent-squiggle">ship, </span>trained, tracked, retrained.</p>
@@ -198,11 +199,11 @@
                     <h3 class="show-title reveal">Storms, forecast<br>three hours early.</h3>
                     <p class="show-sub reveal">
                         A bidirectional LSTM reads NASA satellite telemetry and predicts geomagnetic storms before
-                        they reach Earth — trained on 24+ months of OMNIWeb data with physics-informed features.
+                        they reach Earth - trained on 24+ months of OMNIWeb data with physics-informed features.
                     </p>
 
                     <div class="show-visual reveal" aria-hidden="true">
-                        <div class="chart-head mono">fig. 01 — real-time space weather forecast · R²&thinsp;0.23</div>
+                        <div class="chart-head mono">fig. 01 - real-time space weather forecast · R²&thinsp;0.23</div>
                         <svg id="kp-chart" viewBox="0 0 860 320" preserveAspectRatio="none"></svg>
                         <div class="chart-legend mono">
                             <span><i class="lg lg-teal"></i>Actual NASA Kp</span>
@@ -242,7 +243,7 @@
                         every claim traced back to the exact passage in the source PDF.
                     </p>
 
-                    <div class="fig mono reveal" data-scramble>fig. 02 — agentic retrieval, three specialists in sequence</div>
+                    <div class="fig mono reveal" data-scramble>fig. 02 - agentic retrieval, three specialists in sequence</div>
                     <div class="pipeline reveal" id="pipeline" aria-hidden="true">
                         <div class="pipe-node"><span class="mono">01</span><strong>Internal Researcher</strong><small>hybrid Qdrant + BM25 retrieval</small></div>
                         <div class="pipe-arrow"><i></i></div>
@@ -279,12 +280,12 @@
                     <p class="scribble show-scribble reveal">the model retrains while you sleep</p>
                     <h3 class="show-title reveal">Models that<br>retrain themselves.</h3>
                     <p class="show-sub reveal">
-                        A production-grade taxi-fare prediction system that treats the model as a living component —
+                        A production-grade taxi-fare prediction system that treats the model as a living component -
                         ingestion to deployment, with data contracts guarding every batch and a Champion–Challenger
                         duel deciding what ships.
                     </p>
 
-                    <div class="fig mono reveal" data-scramble>fig. 03 — the automated model lifecycle</div>
+                    <div class="fig mono reveal" data-scramble>fig. 03 - the automated model lifecycle</div>
                     <div class="pipeline reveal" id="mlops-pipeline" aria-hidden="true">
                         <div class="pipe-node"><span class="mono">01</span><strong>Ingest</strong><small>scheduled Airflow 3 DAGs</small></div>
                         <div class="pipe-arrow"><i></i></div>
@@ -317,7 +318,7 @@
                 </div>
             </div>
 
-            <!-- The grid — pinned horizontal gallery on desktop, bento fallback elsewhere -->
+            <!-- The grid - pinned horizontal gallery on desktop, bento fallback elsewhere -->
             <div class="more-work" id="more-work">
                 <div class="container hs-head">
                     <h3 class="more-title reveal">More work</h3>
@@ -400,7 +401,7 @@
                     <article class="card bento-wide stagger">
                         <h3 class="card-title">About</h3>
                         <p>
-                            I specialise in <span class="hl">high-dimensional data pipelines</span>, deep learning, and local
+                            I'm specialise in <span class="hl">high-dimensional data pipelines</span>, deep learning, and local
                             model optimisation with published research and applied work across
                             <span class="hl">RAG systems, LLMs and NLP</span>.
                         </p>
@@ -508,7 +509,7 @@
 
                         <div class="timeline">
                             <article class="tl-item card stagger">
-                                <span class="tl-date mono">Jan — Apr 2026</span>
+                                <span class="tl-date mono">Jan - Apr 2026</span>
                                 <h4>AI Engineer Intern</h4>
                                 <p class="tl-org"><a href="https://elearning.mtai.in/tutor-certificate/?cert_hash=7707b90417a3aef6" target="_blank" rel="noopener">MetaTaaraka AI Innovations</a> · AICTE-accredited</p>
                                 <p>Deep learning across supervised and unsupervised paradigms TensorFlow, Keras,
@@ -516,7 +517,7 @@
                             </article>
 
                             <article class="tl-item card stagger">
-                                <span class="tl-date mono">Oct 2023 — Jan 2024</span>
+                                <span class="tl-date mono">Oct 2023 - Jan 2024</span>
                                 <h4>Research Assistant Intern</h4>
                                 <p class="tl-org">JNTUH, Hyderabad</p>
                                 <p>Hybrid deep learning for medical imaging reproducible pipelines, transfer
@@ -527,12 +528,12 @@
                         <h3 class="col-title mono">// education</h3>
                         <div class="timeline">
                             <article class="tl-item card stagger">
-                                <span class="tl-date mono">2025 — 2027 · Paris</span>
+                                <span class="tl-date mono">2025 - 2027 · Paris</span>
                                 <h4>M.Sc. Data Science &amp; Analytics</h4>
                                 <p class="tl-org">EPITA - École des ingénieurs en informatique</p>
                             </article>
                             <article class="tl-item card stagger">
-                                <span class="tl-date mono">2020 — 2024 · Hyderabad</span>
+                                <span class="tl-date mono">2020 - 2024 · Hyderabad</span>
                                 <h4>B.Tech Computer Science &amp; Engineering</h4>
                                 <p class="tl-org">JNTUH - Jawaharlal Nehru Technological University Hyderabad</p>
                             </article>
@@ -543,11 +544,11 @@
                         <h3 class="col-title mono">// certifications</h3>
                         <div class="card cert-card stagger">
                             <ul class="cert-list">
-                                <li><a href="https://www.theforage.com/completion-certificates/SKZxezskWgmFjRvj9/Tcz8gTtprzAS4xSoK_SKZxezskWgmFjRvj9_qGmwjrMBvGoA4S3Cx_1769811457191_completion_certificate.pdf" target="_blank" rel="noopener">BCG — Data Science <span class="ext">↗</span></a></li>
-                                <li><a href="https://www.theforage.com/completion-certificates/tMjbs76F526fF5v3G/NjynCWzGSaWXQCxSX_tMjbs76F526fF5v3G_qGmwjrMBvGoA4S3Cx_1766943140271_completion_certificate.pdf" target="_blank" rel="noopener">British Airways — Data Science <span class="ext">↗</span></a></li>
-                                <li><a href="https://www.theforage.com/completion-certificates/nkmk7gJitYs4TBvoA/9Wvq4L2WCFQDyyPp3_nkmk7gJitYs4TBvoA_qGmwjrMBvGoA4S3Cx_1766952307845_completion_certificate.pdf" target="_blank" rel="noopener">Wells Fargo — Software Engineering <span class="ext">↗</span></a></li>
-                                <li><a href="https://www.theforage.com/completion-certificates/xhih9yFWsf6AYfngd/HNpZwZcuYwona2d8Y_xhih9yFWsf6AYfngd_qGmwjrMBvGoA4S3Cx_1766951345105_completion_certificate.pdf" target="_blank" rel="noopener">Accenture Nordics — Software Engineering <span class="ext">↗</span></a></li>
-                                <li><a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/9PBTqmSxAf6zZTseP/io9DzWKe3PTsiS6GG_9PBTqmSxAf6zZTseP_qGmwjrMBvGoA4S3Cx_1749627335153_completion_certificate.pdf" target="_blank" rel="noopener">Deloitte Australia — Data Analytics <span class="ext">↗</span></a></li>
+                                <li><a href="https://www.theforage.com/completion-certificates/SKZxezskWgmFjRvj9/Tcz8gTtprzAS4xSoK_SKZxezskWgmFjRvj9_qGmwjrMBvGoA4S3Cx_1769811457191_completion_certificate.pdf" target="_blank" rel="noopener">BCG - Data Science <span class="ext">↗</span></a></li>
+                                <li><a href="https://www.theforage.com/completion-certificates/tMjbs76F526fF5v3G/NjynCWzGSaWXQCxSX_tMjbs76F526fF5v3G_qGmwjrMBvGoA4S3Cx_1766943140271_completion_certificate.pdf" target="_blank" rel="noopener">British Airways - Data Science <span class="ext">↗</span></a></li>
+                                <li><a href="https://www.theforage.com/completion-certificates/nkmk7gJitYs4TBvoA/9Wvq4L2WCFQDyyPp3_nkmk7gJitYs4TBvoA_qGmwjrMBvGoA4S3Cx_1766952307845_completion_certificate.pdf" target="_blank" rel="noopener">Wells Fargo - Software Engineering <span class="ext">↗</span></a></li>
+                                <li><a href="https://www.theforage.com/completion-certificates/xhih9yFWsf6AYfngd/HNpZwZcuYwona2d8Y_xhih9yFWsf6AYfngd_qGmwjrMBvGoA4S3Cx_1766951345105_completion_certificate.pdf" target="_blank" rel="noopener">Accenture Nordics - Software Engineering <span class="ext">↗</span></a></li>
+                                <li><a href="https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/9PBTqmSxAf6zZTseP/io9DzWKe3PTsiS6GG_9PBTqmSxAf6zZTseP_qGmwjrMBvGoA4S3Cx_1749627335153_completion_certificate.pdf" target="_blank" rel="noopener">Deloitte Australia - Data Analytics <span class="ext">↗</span></a></li>
                             </ul>
                             <p class="card-foot mono">* Forage virtual job simulations</p>
                         </div>
@@ -560,7 +561,7 @@
         <section id="contact" class="section">
             <div class="container">
                 <div class="section-head section-head-center">
-                    <p class="scribble section-scribble">your move, human —</p>
+                    <p class="scribble section-scribble">your move, human -</p>
                     <h2 class="section-title">Let's build <span class="accent-squiggle">something.</span></h2>
                 </div>
 
