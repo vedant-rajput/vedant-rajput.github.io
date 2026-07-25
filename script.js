@@ -449,6 +449,8 @@ function scrambleTo(el, dur = 0.8) {
     const FAINT = ['·', '.', ':'];                            // sparse background texture
     const BUCKETS = 5;               // alpha tiers, batched to keep fillStyle churn low
     const FULL = 0.42, DIM = 0.12;   // layer opacity: showcased vs. behind text
+    const BLOOM_R2 = 34000;                                       // cursor bloom radius^2
+    const DISP_R = 150, DISP_R2 = DISP_R * DISP_R, DISP_MAX = 18; // cursor parting + swirl
 
     /* --- value noise: one hash grid, bilinear + smoothstep --- */
     const N = 256;
@@ -498,23 +500,36 @@ function scrambleTo(el, dur = 0.8) {
                 const px = gx * CELL + CELL / 2;
                 const py = gy * CELL + CELL / 2;
 
-                // the cursor blooms the field open around it
+                // distance to the cursor drives a bloom, a parting and a swirl
                 const dx = px - pointer.x, dy = py - pointer.y;
                 const d2 = dx * dx + dy * dy;
-                if (d2 < 34000) d += (1 - d2 / 34000) * 0.42;
+                if (d2 < BLOOM_R2) d += (1 - d2 / BLOOM_R2) * 0.42;
 
                 if (d < 0.42) continue;                       // empty space
                 const b = Math.min(1, (d - 0.42) / 0.4);
+
+                // the cursor shoulders glyphs aside and spins them as it passes
+                let rx = px, ry = py, swirl = 0;
+                if (d2 < DISP_R2) {
+                    const dd = Math.sqrt(d2) || 1;
+                    const f = 1 - dd / DISP_R;
+                    const push = f * f * DISP_MAX;            // soft at the rim
+                    rx = px + (dx / dd) * push;
+                    ry = py + (dy / dd) * push;
+                    swirl = f;
+                }
 
                 let ch;
                 if (b < 0.28) {
                     ch = FAINT[(gx + gy) % 3];
                 } else {
-                    const ang = noise(gx * 0.045 - t * 0.9, gy * 0.045 + t * 0.4) * Math.PI * 4;
+                    let ang = noise(gx * 0.045 - t * 0.9, gy * 0.045 + t * 0.4) * Math.PI * 4;
+                    // near the cursor, bend the flow tangentially into a vortex
+                    if (swirl) ang = ang * (1 - swirl) + (Math.atan2(dy, dx) + Math.PI * 0.5) * swirl;
                     ch = DIRS[(((ang / (Math.PI * 2)) * 8) | 0) & 7];
                 }
                 const arr = layers[Math.min(BUCKETS - 1, (b * BUCKETS) | 0)];
-                arr.push(ch, px, py);
+                arr.push(ch, rx, ry);
             }
         }
 
@@ -748,9 +763,11 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
-   NASA showcase: actual vs predicted Kp - the observed line
-   is drawn by your scroll position (scrubbed)
-   Tech: SVG path-length draw + GSAP ScrollTrigger scrub
+   NASA showcase: actual vs predicted Kp. Scroll plots the chart in
+   like live telemetry - the grid eases up, then a glowing scan line
+   sweeps left-to-right while both traces wipe in behind it.
+   Tech: SVG clip-rect wipe + leading scan line, GSAP timeline scrubbed
+         to a ScrollTrigger over the visual
    ============================================================ */
 (function kpChart() {
     const svg = document.getElementById('kp-chart');
@@ -800,26 +817,30 @@ function scrambleTo(el, dur = 0.8) {
         [188, 1.8], [190, 2.1], [192, 2.8], [194, 2.4], [196, 2.5], [198, 2.3], [200, 2.2],
     ];
 
+    // static layer: grid + axis labels, revealed first
+    const staticG = el('g', { class: 'kp-static' });
     for (let kp = 0; kp <= 4; kp++) {
         const y = yFor(kp);
-        svg.appendChild(el('line', { class: 'kp-grid', x1: M.l, x2: W - M.r, y1: y, y2: y }));
+        staticG.appendChild(el('line', { class: 'kp-grid', x1: M.l, x2: W - M.r, y1: y, y2: y }));
         const label = el('text', { class: 'kp-label', x: M.l - 8, y: y + 4, 'text-anchor': 'end' });
         label.textContent = kp;
-        svg.appendChild(label);
+        staticG.appendChild(label);
     }
     for (let h = 0; h <= HOURS; h += 25) {
         const x = xFor(h);
-        svg.appendChild(el('line', { class: 'kp-grid', x1: x, x2: x, y1: M.t, y2: H - M.b }));
+        staticG.appendChild(el('line', { class: 'kp-grid', x1: x, x2: x, y1: M.t, y2: H - M.b }));
         if (h % 50 === 0) {
             const label = el('text', { class: 'kp-label', x, y: H - M.b + 16, 'text-anchor': 'middle' });
             label.textContent = h;
-            svg.appendChild(label);
+            staticG.appendChild(label);
         }
     }
     const xAxis = el('text', { class: 'kp-label', x: M.l + plotW / 2, y: H - 4, 'text-anchor': 'middle' });
     xAxis.textContent = 'hours';
-    svg.appendChild(xAxis);
+    staticG.appendChild(xAxis);
+    svg.appendChild(staticG);
 
+    // data paths
     let stepD = `M${xFor(actual[0][0]).toFixed(1)},${yFor(actual[0][1]).toFixed(1)}`;
     for (let i = 1; i < actual.length; i++) {
         const x = xFor(actual[i][0]).toFixed(1);
@@ -831,23 +852,57 @@ function scrambleTo(el, dur = 0.8) {
         .map(([h, kp]) => `${xFor(h).toFixed(1)},${yFor(kp).toFixed(1)}`)
         .join(' L');
 
-    const line = el('path', { class: 'kp-line', d: stepD, pathLength: 1 });
+    // the prediction lives inside a clip rect that widens to the pen's x, so it
+    // fills in alongside the traced waveform while keeping its dashed look
+    const defs = el('defs', {});
+    const clip = el('clipPath', { id: 'kp-reveal' });
+    const clipRect = el('rect', { x: 0, y: 0, width: W, height: H });
+    clip.appendChild(clipRect); defs.appendChild(clip); svg.appendChild(defs);
+
+    const predG = el('g', { 'clip-path': 'url(#kp-reveal)' });
+    predG.appendChild(el('path', { class: 'kp-pred', d: predD }));
+    svg.appendChild(predG);
+
+    // the observed line is the ECG waveform - drawn along its own path
+    const line = el('path', { class: 'kp-line', d: stepD });
     svg.appendChild(line);
-    svg.appendChild(el('path', { class: 'kp-pred', d: predD }));
 
-    if (!hasGSAP || prefersReducedMotion) return;
+    // the cardiograph pen: a glowing, pulsing dot that rides the drawing tip
+    const ecg = el('g', { class: 'kp-ecg', opacity: 0 });
+    ecg.appendChild(el('circle', { class: 'kp-ecg-halo', r: 7 }));
+    ecg.appendChild(el('circle', { class: 'kp-ecg-core', r: 3.4 }));
+    svg.appendChild(ecg);
 
-    // scrubbed draw: the line follows your scroll through the visual
-    gsap.set(line, { strokeDasharray: 1, strokeDashoffset: 1 });
-    gsap.to(line, {
-        strokeDashoffset: 0, ease: 'none',
+    if (!hasGSAP || prefersReducedMotion) return;   // no motion: the full chart just shows
+
+    // scrubbed ECG draw: the pen traces the waveform as you scroll
+    const L = line.getTotalLength();
+    line.style.strokeDasharray = L;
+    line.style.strokeDashoffset = L;                // hidden to start
+    clipRect.setAttribute('width', M.l);            // hide the prediction to start
+    gsap.set(staticG, { opacity: 0, y: 8 });
+
+    const prog = { p: 0 };
+    function drawECG() {
+        const p = prog.p;
+        line.style.strokeDashoffset = L * (1 - p);
+        const pt = line.getPointAtLength(L * p);     // current pen tip (follows the trace)
+        ecg.setAttribute('transform', `translate(${pt.x.toFixed(2)},${pt.y.toFixed(2)})`);
+        clipRect.setAttribute('width', Math.max(M.l, pt.x));
+        // fade the pen in at the start and out as it reaches the end
+        ecg.style.opacity = Math.max(0, Math.min(1, Math.min(p * 16, (1 - p) * 16)));
+    }
+
+    const tl = gsap.timeline({
         scrollTrigger: {
             trigger: '.show-visual',
-            start: 'top 85%',
-            end: 'top 25%',
-            scrub: 0.5,
+            start: 'top 82%',
+            end: 'bottom 60%',
+            scrub: 0.6,
         },
     });
+    tl.to(staticG, { opacity: 1, y: 0, duration: 0.14, ease: 'power1.out' }, 0)
+        .to(prog, { p: 1, ease: 'none', duration: 0.86, onUpdate: drawECG }, 0.12);
 })();
 
 /* ============================================================
@@ -906,6 +961,93 @@ function scrambleTo(el, dur = 0.8) {
             gsap.to(el, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.4)' });
         });
     });
+})();
+
+/* ============================================================
+   Skill "bubbles" - pills repel the cursor and spring back with a
+   bounce, plus a gentle idle bob so the cards feel alive
+   Tech: hand-rolled per-frame spring physics + rAF, cursor repulsion
+   ============================================================ */
+(function skillBubbles() {
+    if (prefersReducedMotion || !finePointer) return;
+    const section = document.getElementById('skills');
+    if (!section) return;
+
+    const nodes = section.querySelectorAll('.tags span, .plain-list li');
+    if (!nodes.length) return;
+
+    const R = 130;        // cursor influence radius (px)
+    const MAX = 28;       // max push distance (px)
+    const STIFF = 0.16;   // spring pull toward target
+    const DAMP = 0.78;    // < 1 leaves a little overshoot => bounce
+
+    const bubbles = [];
+    nodes.forEach((el) => {
+        el.classList.add('bubble-live');
+        bubbles.push({
+            el, x: 0, y: 0, vx: 0, vy: 0,
+            amp: 1.6 + Math.random() * 1.8,          // idle bob amplitude
+            speed: 0.6 + Math.random() * 0.7,        // idle bob speed
+            phase: Math.random() * Math.PI * 2,
+        });
+    });
+
+    let px = 0, py = 0, active = false;
+    section.addEventListener('pointermove', (e) => {
+        px = e.clientX; py = e.clientY; active = true;
+    }, { passive: true });
+    section.addEventListener('pointerleave', () => { active = false; });
+
+    let running = false, rafId = null, t0 = 0;
+
+    function frame(now) {
+        if (!t0) t0 = now;
+        const t = (now - t0) / 1000;
+
+        for (const b of bubbles) {
+            const r = b.el.getBoundingClientRect();
+            // home = current center minus the offset we applied last frame
+            const hx = r.left + r.width / 2 - b.x;
+            const hy = r.top + r.height / 2 - b.y;
+
+            let tx = 0, ty = 0;
+            if (active) {
+                const dx = hx - px, dy = hy - py;
+                const dist = Math.hypot(dx, dy) || 0.001;
+                if (dist < R) {
+                    const push = (1 - dist / R) * MAX;
+                    tx = (dx / dist) * push;
+                    ty = (dy / dist) * push;
+                }
+            }
+
+            // underdamped spring => springy bounce back
+            b.vx += (tx - b.x) * STIFF - b.vx * DAMP;
+            b.vy += (ty - b.y) * STIFF - b.vy * DAMP;
+            b.x += b.vx;
+            b.y += b.vy;
+
+            // gentle idle float, layered on top of the spring offset
+            const fy = Math.sin(t * b.speed + b.phase) * b.amp;
+            const fx = Math.cos(t * b.speed * 0.8 + b.phase) * b.amp * 0.5;
+
+            b.el.style.transform = `translate(${(b.x + fx).toFixed(2)}px, ${(b.y + fy).toFixed(2)}px)`;
+        }
+        rafId = running ? requestAnimationFrame(frame) : null;
+    }
+
+    function start() { if (!running) { running = true; if (!rafId) rafId = requestAnimationFrame(frame); } }
+    function stop() {
+        running = false; active = false;
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        bubbles.forEach((b) => { b.x = b.y = b.vx = b.vy = 0; b.el.style.transform = ''; });
+    }
+
+    // only animate while the section is on screen
+    const io = new IntersectionObserver((entries) => {
+        entries[0].isIntersecting ? start() : stop();
+    }, { rootMargin: '120px' });
+    io.observe(section);
 })();
 
 /* ============================================================
@@ -1050,25 +1192,25 @@ function scrambleTo(el, dur = 0.8) {
 
     const bootAt = Date.now();
     const quotes = [
-        '"In God we trust. All others must bring data." - W. E. Deming',
-        '"All models are wrong, but some are useful." - G. Box',
+        '"In God we trust. All others must bring data." · W. E. Deming',
+        '"All models are wrong, but some are useful." · G. Box',
         '"Data is the new oil, but refined models are the engine."',
-        '"Torture the data, and it will confess to anything." - R. Coase',
-        '"The goal is to turn data into information, and information into insight." - C. Fiorina',
-        '"The world is one big data problem." - Andrew McAfee',
-        '"Without data, you\'re just another person with an opinion." - W. Edwards Deming',
-        '"Data is a precious thing and will last longer than the systems themselves." - T. Berners-Lee',
-        '"In God we trust, all others bring data." - W. Edwards Deming',
-        '"Data is like garbage. You\'d better know what you are going to do with it before you collect it." - M. Loukides',
-        '"The most valuable commodity I know of is information." - G. Moore',
-        '"Data is the sword of the 21st century, those who wield it well, the samurai." - J. Rosenberg',
-        '"Big data is at the foundation of all the megatrends that are happening." - E. Schmidt',
-        '"Data is a tool for enhancing intuition." - H. Davenport',
-        '"The purpose of computing is insight, not numbers." - R. Tukey',
-        '"Data beats emotions." - S. Jobs',
-        '"Data is the new science. Big Data holds the answers." - Pat Gelsinger',
-        '"Data is a precious thing and will last longer than the systems themselves." - Tim Berners-Lee',
-        '"The goal is to turn data into information, and information into insight." - Carly Fiorina',
+        '"Torture the data, and it will confess to anything." · R. Coase',
+        '"The goal is to turn data into information, and information into insight." · C. Fiorina',
+        '"The world is one big data problem." · Andrew McAfee',
+        '"Without data, you\'re just another person with an opinion." · W. Edwards Deming',
+        '"Data is a precious thing and will last longer than the systems themselves." · T. Berners-Lee',
+        '"In God we trust, all others bring data." · W. Edwards Deming',
+        '"Data is like garbage. You\'d better know what you are going to do with it before you collect it." · M. Loukides',
+        '"The most valuable commodity I know of is information." · G. Moore',
+        '"Data is the sword of the 21st century, those who wield it well, the samurai." · J. Rosenberg',
+        '"Big data is at the foundation of all the megatrends that are happening." · E. Schmidt',
+        '"Data is a tool for enhancing intuition." · H. Davenport',
+        '"The purpose of computing is insight, not numbers." · R. Tukey',
+        '"Data beats emotions." · S. Jobs',
+        '"Data is the new science. Big Data holds the answers." · Pat Gelsinger',
+        '"Data is a precious thing and will last longer than the systems themselves." · Tim Berners-Lee',
+        '"The goal is to turn data into information, and information into insight." · Carly Fiorina',
     ];
 
     function uptime() {
@@ -1160,14 +1302,14 @@ function scrambleTo(el, dur = 0.8) {
             });
             const data = await res.json();
             if (data.success) {
-                status.textContent = '✓ message received - I\'ll get back to you soon.';
+                status.textContent = '✓ message received. I\'ll get back to you soon.';
                 form.reset();
             } else {
                 throw new Error(data.message || 'submission failed');
             }
         } catch {
             status.classList.add('error');
-            status.textContent = '✗ something went wrong - email me directly at vedantt.rajput@gmail.com';
+            status.textContent = '✗ something went wrong. Email me directly at vedantt.rajput@gmail.com';
         } finally {
             btn.disabled = false;
         }
