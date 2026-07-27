@@ -179,6 +179,7 @@ function scrambleTo(el, dur = 0.8) {
     function open() {
         if (opened || button.disabled) return;
         opened = true;
+        disarm();
 
         // The pill grows over 0.8s; hand the page back the moment it has
         // covered every edge, so scrolling is never held hostage to the
@@ -194,6 +195,47 @@ function scrambleTo(el, dur = 0.8) {
         revealHero(gsap.timeline({ defaults: { ease: EASE }, delay: 0.55 }), 0);
     }
 
+    /* ---- entering: a scroll gesture, not a click ----
+       Nothing actually scrolls while the gate is up (body is locked and Lenis
+       is stopped) but wheel and touch events still fire, so we read intent
+       from them directly. A small threshold keeps trackpad jitter from
+       opening the gate before the visitor meant it. */
+    const INTENT = 32;
+    let wheelAcc = 0;
+    let touchY = null;
+
+    const onWheel = (e) => {
+        if (e.deltaY <= 0) return;          // only downward counts
+        wheelAcc += e.deltaY;
+        if (wheelAcc >= INTENT) open();
+    };
+    const onTouchStart = (e) => { touchY = e.touches[0].clientY; };
+    const onTouchMove = (e) => {
+        if (touchY === null) return;
+        if (touchY - e.touches[0].clientY >= INTENT) open();   // swipe up
+    };
+    // keyboard users cannot spin a wheel - the usual scroll keys stand in
+    const onKey = (e) => {
+        if (['ArrowDown', 'PageDown', 'End', ' ', 'Spacebar', 'Enter'].includes(e.key)) {
+            e.preventDefault();
+            open();
+        }
+    };
+
+    function arm() {
+        window.addEventListener('wheel', onWheel, { passive: true });
+        window.addEventListener('touchstart', onTouchStart, { passive: true });
+        window.addEventListener('touchmove', onTouchMove, { passive: true });
+        window.addEventListener('keydown', onKey);
+    }
+    function disarm() {
+        window.removeEventListener('wheel', onWheel);
+        window.removeEventListener('touchstart', onTouchStart);
+        window.removeEventListener('touchmove', onTouchMove);
+        window.removeEventListener('keydown', onKey);
+    }
+
+    // clicking is not advertised, but someone who tries it should not be stuck
     button.addEventListener('click', open);
 
     // count up, then hand control to the visitor
@@ -203,10 +245,11 @@ function scrambleTo(el, dur = 0.8) {
             num.textContent = Math.round(this.targets()[0].v);
         },
         onComplete() {
-            word.textContent = 'Welcome';
+            word.textContent = 'Scroll';
             button.disabled = false;
             wrap.classList.add('is-ready');
             button.focus({ preventScroll: true });
+            arm();
         },
     });
 })();

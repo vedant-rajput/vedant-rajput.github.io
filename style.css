@@ -1208,8 +1208,9 @@ body.pre-lock { overflow: hidden; }
    opacity inline on every mousemove - so the gate simply outranks it
    (see the z-index on .loading-screen) and restores the real pointer. */
 body.has-cursor .loading-screen, body.has-cursor .loading-screen * { cursor: default; }
-body.has-cursor .loading-wrap.is-ready .loading-button,
-.loading-wrap.is-ready .loading-button { cursor: pointer; }
+/* the gate asks to be scrolled, so nothing here advertises a click */
+body.has-cursor .loading-wrap .loading-button,
+.loading-wrap .loading-button { cursor: default; }
 .loading-wrap.is-clicked .loading-button { overflow: visible; }
 
 /* The glow sits behind the opaque button, so all you ever see of it is the
@@ -1259,8 +1260,16 @@ body.has-cursor .loading-wrap.is-ready .loading-button,
     transform: scale(0); opacity: 0;
     transition: transform 0.5s 0.5s, opacity 0.5s 0.5s;
 }
-.loading-wrap.is-ready .loading-icon { transform: scale(1); opacity: 1; }
-.loading-wrap.is-clicked .loading-icon { transition: 1s; transform: translateX(200px); }
+/* The bob rides the independent `translate` property so it composes with the
+   scale-in above instead of fighting it for `transform`. */
+.loading-wrap.is-ready .loading-icon {
+    transform: scale(1); opacity: 1;
+    animation: iconBob 1.5s ease-in-out infinite;
+}
+@keyframes iconBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 4px; } }
+.loading-wrap.is-clicked .loading-icon {
+    animation: none; transition: 1s; transform: translateY(160px);
+}
 .loading-wrap.is-clicked .loading-content2 { opacity: 0; transition: 0.5s; }
 
 @media (min-width: 1400px) {

@@ -88,14 +88,15 @@
             <!-- the glow lives behind the button, so it only shows through the
                  6px rim of the wrapper - a lit edge, not a lit button -->
             <span class="loading-hover" aria-hidden="true"></span>
-            <button class="loading-button" id="loading-button" type="button" disabled aria-live="polite">
+            <button class="loading-button" id="loading-button" type="button" disabled aria-live="polite"
+                aria-label="Scroll to enter the site, or press Enter">
                 <span class="loading-content">
                     <i class="loading-box" aria-hidden="true"></i>
                     <span class="loading-content2">
                         <span class="loading-word" id="loading-word">Loading</span>
                         <span class="loading-num" id="loading-num">0</span>
                         <svg class="loading-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4"
+                            <path d="M12 5v13M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4"
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </span>
