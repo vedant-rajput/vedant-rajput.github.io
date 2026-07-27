@@ -120,8 +120,12 @@ function scrambleTo(el, dur = 0.8) {
 }
 
 /* ============================================================
-   Preloader → hero intro
-   Tech: GSAP timeline (counter, clip-path wipe) + custom SplitText per-char masks
+   Preloader → click-to-enter → hero intro
+   A light gate over the dark site. The pill counts to 100, flips to
+   "Welcome", and on click stretches past every edge of the viewport -
+   it is painted in --bg, so the button literally becomes the page.
+   Tech: CSS transition on min-width/min-height (a scale() would warp
+   the radius and the label), GSAP for the hero reveal underneath
    ============================================================ */
 (function preloader() {
     const pre = document.getElementById('preloader');
@@ -139,7 +143,13 @@ function scrambleTo(el, dur = 0.8) {
     const chars = [];
     document.querySelectorAll('#hero-title .ht-seg').forEach((seg) => chars.push(...splitChars(seg)));
 
-    // Repeat visit this session → short hero intro, no counter
+    const revealHero = (tl, at) => tl
+        .from(chars, { yPercent: 120, rotate: 5, duration: 1.05, stagger: 0.024, ease: 'power4.out' }, at)
+        .from(heroBits, { opacity: 0, y: 24, duration: 1, stagger: 0.1 }, '-=0.7')
+        .from('#net-canvas', { opacity: 0, duration: 1.4, ease: 'power2.out' }, '-=0.9')
+        .from('.scroll-cue', { opacity: 0, duration: 0.6 }, '-=0.4');
+
+    // Repeat visit this session → short hero intro, no gate
     if (sessionStorage.getItem('vr-seen')) {
         pre.remove();
         gsap.from(chars, { yPercent: 120, rotate: 5, duration: 0.9, stagger: 0.02, ease: 'power4.out' });
@@ -148,31 +158,57 @@ function scrambleTo(el, dur = 0.8) {
     }
     sessionStorage.setItem('vr-seen', '1');
 
+    const wrap = document.getElementById('loading-wrap');
+    const button = document.getElementById('loading-button');
+    const word = document.getElementById('loading-word');
+    const num = document.getElementById('loading-num');
+
     if (lenis) lenis.stop();
-    const count = document.getElementById('pre-count');
-    const barFill = document.getElementById('pre-bar-fill');
-    const tl = gsap.timeline({
-        defaults: { ease: EASE },
-        onComplete: () => { pre.remove(); if (lenis) lenis.start(); },
+    document.body.classList.add('pre-lock');
+
+    // The glow chases the pointer. Custom properties go on the wrap because
+    // that is the glow's parent - setting them on the button, its sibling,
+    // would never reach it.
+    wrap.addEventListener('pointermove', (e) => {
+        const r = wrap.getBoundingClientRect();
+        wrap.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        wrap.style.setProperty('--my', (e.clientY - r.top) + 'px');
     });
 
-    tl.from('.pre-inner', { opacity: 0, y: 14, duration: 0.45 })
-        .from('.pre-count', { opacity: 0, y: 24, duration: 0.45 }, '<0.1')
-        .to({ v: 0 }, {
-            v: 100, duration: 1.1, ease: 'power2.inOut',
-            onUpdate() {
-                const v = Math.round(this.targets()[0].v);
-                count.textContent = String(v).padStart(2, '0');
-                if (barFill) barFill.style.width = v + '%';
-            },
-        })
-        .to(['.pre-inner', '.pre-count'], { opacity: 0, y: -16, duration: 0.35 })
-        .to(pre, { clipPath: 'inset(0 0 100% 0)', duration: 0.85, ease: 'power4.inOut' }, '-=0.05')
-        // the cover prints itself: masthead characters rise out of their masks
-        .from(chars, { yPercent: 120, rotate: 5, duration: 1.05, stagger: 0.024, ease: 'power4.out' }, '-=0.55')
-        .from(heroBits, { opacity: 0, y: 24, duration: 1, stagger: 0.1 }, '-=0.7')
-        .from('#net-canvas', { opacity: 0, duration: 1.4, ease: 'power2.out' }, '-=0.9')
-        .from('.scroll-cue', { opacity: 0, duration: 0.6 }, '-=0.4');
+    let opened = false;
+    function open() {
+        if (opened || button.disabled) return;
+        opened = true;
+
+        // The pill grows over 0.8s; hand the page back the moment it has
+        // covered every edge, so scrolling is never held hostage to the
+        // rest of the intro.
+        wrap.classList.add('is-clicked');
+
+        setTimeout(() => {
+            pre.remove();
+            document.body.classList.remove('pre-lock');
+            if (lenis) lenis.start();
+        }, 850);
+
+        revealHero(gsap.timeline({ defaults: { ease: EASE }, delay: 0.55 }), 0);
+    }
+
+    button.addEventListener('click', open);
+
+    // count up, then hand control to the visitor
+    gsap.to({ v: 0 }, {
+        v: 100, duration: 2.2, ease: 'power2.inOut', delay: 0.35,
+        onUpdate() {
+            num.textContent = Math.round(this.targets()[0].v);
+        },
+        onComplete() {
+            word.textContent = 'Welcome';
+            button.disabled = false;
+            wrap.classList.add('is-ready');
+            button.focus({ preventScroll: true });
+        },
+    });
 })();
 
 /* ============================================================
@@ -327,6 +363,15 @@ function scrambleTo(el, dur = 0.8) {
         });
     });
 
+    // the pyramid builds from the apex down, each row spreading from its centre
+    document.querySelectorAll('.pyramid').forEach((pyr) => {
+        gsap.from(pyr.querySelectorAll('.pyr-item'), {
+            opacity: 0, y: 26, scale: 0.8, duration: 0.7, ease: 'back.out(1.6)',
+            stagger: { each: 0.045, from: 'start' },
+            scrollTrigger: { trigger: pyr, start: 'top 86%' },
+        });
+    });
+
     // flagship big numbers
     document.querySelectorAll('.show-stats').forEach((row) => {
         gsap.from(row.querySelectorAll('.big-num'), {
@@ -388,6 +433,63 @@ function scrambleTo(el, dur = 0.8) {
 })();
 
 /* ============================================================
+   Timeline rails - the line draws downward as you scroll past,
+   a glowing dot rides its leading edge, and each entry's node
+   lights as the line reaches it.
+   Tech: one scrubbed ScrollTrigger per timeline; the line is
+   revealed with clip-path so nothing touches layout
+   ============================================================ */
+(function timelineRails() {
+    const rails = document.querySelectorAll('.timeline');
+    if (!rails.length) return;
+
+    // Without GSAP (or with reduced motion) show the finished state
+    if (!hasGSAP || prefersReducedMotion) {
+        rails.forEach((tl) => {
+            const line = tl.querySelector('.tl-line');
+            if (line) line.style.clipPath = 'inset(0 0 0% 0)';
+            tl.querySelectorAll('.tl-item').forEach((i) => i.classList.add('node-lit'));
+        });
+        return;
+    }
+
+    rails.forEach((tl) => {
+        const track = tl.querySelector('.tl-track');
+        const line = tl.querySelector('.tl-line');
+        const dot = tl.querySelector('.tl-dot');
+        const items = [...tl.querySelectorAll('.tl-item')];
+        if (!track || !line || !dot) return;
+
+        ScrollTrigger.create({
+            trigger: tl,
+            start: 'top 78%',
+            end: 'bottom 70%',
+            scrub: 0.6,
+            invalidateOnRefresh: true,
+            // #experience sits below two pinned sections, and those pins only
+            // add their spacer height when they refresh. Refresh last so this
+            // rail measures against the final document height, not the
+            // ~3900px-shorter one that exists before the pins are laid out.
+            refreshPriority: -1,
+            onUpdate(self) {
+                const p = self.progress;
+                const h = track.offsetHeight;
+
+                line.style.clipPath = `inset(0 0 ${(1 - p) * 100}% 0)`;
+                gsap.set(dot, { y: p * h });
+                dot.classList.toggle('lit', p > 0.005 && p < 0.995);
+
+                // how far down the timeline the leading edge has reached
+                const reach = track.offsetTop + p * h;
+                items.forEach((item) => {
+                    item.classList.toggle('node-lit', reach >= item.offsetTop + 36 - 4);
+                });
+            },
+        });
+    });
+})();
+
+/* ============================================================
    Scroll story - the section pins while statements trade
    places over a giant outlined ghost word
    Tech: GSAP timeline + ScrollTrigger pin & scrub, gated by gsap.matchMedia (>=768px)
@@ -411,6 +513,9 @@ function scrambleTo(el, dur = 0.8) {
                 trigger: story, start: 'top top',
                 end: () => '+=' + slides.length * window.innerHeight * 0.7,
                 pin, scrub: 0.5, anticipatePin: 1, invalidateOnRefresh: true,
+                // pins must lay down their spacer height before anything below
+                // them measures, or every later trigger fires ~3900px too early
+                refreshPriority: 1,
             },
         });
 
@@ -600,6 +705,7 @@ function scrambleTo(el, dur = 0.8) {
             scrollTrigger: {
                 trigger: wrap, start: 'top top', end: () => '+=' + dist(),
                 pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true,
+                refreshPriority: 1,   // see note on the story pin
             },
         });
 
@@ -1314,4 +1420,23 @@ function scrambleTo(el, dur = 0.8) {
             btn.disabled = false;
         }
     });
+})();
+
+/* ============================================================
+   Recompute every trigger once the page has stopped moving.
+   The pinned sections (scroll story, horizontal gallery) add
+   their spacer height after the earlier triggers have already
+   cached start/end, which left every scrubbed effect below them
+   measuring against a document ~3000px shorter than the real one.
+   ============================================================ */
+(function refreshTriggers() {
+    if (!hasGSAP) return;
+
+    const refresh = () => ScrollTrigger.refresh();
+
+    // after all IIFEs above have registered their pins
+    requestAnimationFrame(refresh);
+    // and again once late layout shifts have landed
+    window.addEventListener('load', refresh);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
 })();

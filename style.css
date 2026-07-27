@@ -43,13 +43,16 @@
     --glass-hover: rgba(255, 255, 255, 0.065);
     --edge: rgba(255, 255, 255, 0.055);          /* inner top highlight */
 
-    /* Accent: electric teal carries the site; violet is reserved
-       for the hero gradient and one flagship stat */
+    /* One accent carries the whole site: electric teal.
+       --cyan is only ever the far end of a teal gradient, never used alone.
+       --teal-soft is the same hue, lighter, for "available / ok" states.
+       --data-alt is NOT a brand colour - it exists solely to separate the
+       predicted series from the observed one in the Kp chart. */
     --teal: #2dd4bf;
     --cyan: #22d3ee;
-    --violet: #a78bfa;
-    --mint: #6ee7b7;
+    --teal-soft: #5eead4;
     --teal-glow: rgba(45, 212, 191, 0.14);
+    --data-alt: #a78bfa;
 
     /* Text */
     --text: #eef2f7;
@@ -87,7 +90,7 @@
     padding-bottom: 0.12em;
 }
 .accent-squiggle.no-underline { background: none; padding-bottom: 0; }
-.warm { color: var(--violet); }
+.warm { color: var(--teal); }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -208,6 +211,14 @@ a { color: inherit; text-decoration: none; }
     color: var(--text-dim);
     transition: color 0.3s var(--ease);
 }
+/* the one link that leaves the page - marked with a live dot */
+.nav-play { color: var(--teal); padding-left: 20px; }
+.nav-play::before {
+    content: ''; position: absolute; left: 9px; top: 50%; margin-top: -2px;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--teal); box-shadow: 0 0 7px var(--teal);
+    animation: avail-pulse 2.2s infinite;
+}
 .nav-link::after {
     content: ''; position: absolute; left: 12px; right: 12px; bottom: 2px;
     height: 1px; background: var(--teal);
@@ -303,7 +314,7 @@ a { color: inherit; text-decoration: none; }
 .ht-seg .ch { display: inline-block; will-change: transform; }
 .ht-accent .ht-seg {
     color: var(--teal);
-    background: var(--squiggle) repeat-x left calc(100% - 0.03em) / auto 0.13em;
+    /* padding kept so the descender on "g" still clears the line below */
     padding-bottom: 0.14em;
 }
 .ed-sub {
@@ -324,12 +335,12 @@ a { color: inherit; text-decoration: none; }
     border-radius: 99px;
     background: var(--teal-glow);
     box-shadow: inset 0 0 0 1px rgba(45, 212, 191, 0.35);
-    font-size: 0.8rem; font-weight: 600; color: var(--mint);
+    font-size: 0.8rem; font-weight: 600; color: var(--teal-soft);
     letter-spacing: 0.04em;
 }
 .avail-dot {
     width: 8px; height: 8px; border-radius: 50%; flex: none;
-    background: var(--mint);
+    background: var(--teal-soft);
     animation: avail-pulse 2.2s infinite;
 }
 @keyframes avail-pulse {
@@ -573,6 +584,52 @@ a { color: inherit; text-decoration: none; }
 
 .hl { color: var(--teal); font-weight: 500; }
 
+/* ============ Tech pyramid ============
+   Apex is the language, base is the infrastructure it ships on.
+   Tile size is fluid so five across still fits a phone. */
+.pyramid {
+    --tile: clamp(50px, 8.4vw, 82px);
+    --gap: clamp(8px, 1.1vw, 14px);
+    display: flex; flex-direction: column; align-items: center;
+    gap: var(--gap); margin-bottom: 40px;
+}
+.pyr-row { display: flex; justify-content: center; gap: var(--gap); }
+.pyr-item {
+    position: relative;
+    display: grid; place-items: center;
+    width: var(--tile); height: var(--tile);
+    border-radius: 18px;
+    background: var(--glass);
+    box-shadow: inset 0 1px 0 var(--edge);
+    transition: background 0.4s var(--ease), transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.pyr-item img {
+    width: 54%; height: 54%; object-fit: contain;
+    /* icons sit back until you reach for them */
+    opacity: 0.72; filter: saturate(0.68);
+    transition: opacity 0.4s var(--ease), filter 0.4s var(--ease);
+}
+.pyr-item:hover, .pyr-item:focus-visible {
+    background: var(--teal-glow);
+    transform: translateY(-6px);
+    box-shadow: inset 0 1px 0 var(--edge), 0 0 0 1px rgba(45, 212, 191, 0.3), 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+.pyr-item:hover img, .pyr-item:focus-visible img { opacity: 1; filter: saturate(1); }
+
+/* name tag on hover */
+.pyr-item::after {
+    content: attr(data-name);
+    position: absolute; bottom: calc(100% + 8px); left: 50%;
+    transform: translate(-50%, 4px);
+    padding: 5px 10px; border-radius: 8px;
+    background: var(--bg-band);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+    color: var(--text); font-family: var(--font-mono); font-size: 0.7rem;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.pyr-item:hover::after, .pyr-item:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+
 /* ============ Bento grid ============ */
 .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .bento-wide { grid-column: span 2; }
@@ -655,8 +712,8 @@ a { color: inherit; text-decoration: none; }
 .chart-legend span { display: inline-flex; align-items: center; gap: 8px; }
 .lg { display: inline-block; width: 22px; height: 2px; }
 .lg-teal { background: var(--teal); box-shadow: 0 0 8px var(--teal); }
-.lg-violet {
-    background: repeating-linear-gradient(90deg, var(--violet) 0 6px, transparent 6px 10px);
+.lg-pred {
+    background: repeating-linear-gradient(90deg, var(--data-alt) 0 6px, transparent 6px 10px);
     box-shadow: 0 0 8px rgba(167, 139, 250, 0.45);
 }
 
@@ -673,7 +730,7 @@ a { color: inherit; text-decoration: none; }
     color: var(--text);
 }
 .big-num.grad {
-    background: linear-gradient(100deg, var(--teal), var(--violet));
+    background: linear-gradient(100deg, var(--teal), var(--cyan));
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
 }
@@ -829,7 +886,61 @@ a { color: inherit; text-decoration: none; }
 .exp-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; align-items: start; }
 .col-title { color: var(--text-faint); font-size: 0.78rem; margin: 30px 0 16px; font-weight: 500; }
 .exp-col > .col-title:first-child { margin-top: 0; }
-.timeline { display: grid; gap: 14px; }
+/* Timeline: a rail that draws itself downward on scroll, led by a
+   glowing dot. The line is clipped rather than resized so the gradient
+   stays put and the whole thing stays off the layout thread. */
+.timeline { display: grid; gap: 14px; position: relative; padding-left: 30px; }
+
+.tl-track { position: absolute; top: 6px; bottom: 6px; left: 6px; width: 2px; }
+.tl-line {
+    position: absolute; inset: 0; border-radius: 2px;
+    background: linear-gradient(180deg,
+        var(--teal) 0%,
+        var(--cyan) 45%,
+        rgba(45, 212, 191, 0.25) 100%);
+    /* JS scrubs the bottom inset from 100% → 0% */
+    clip-path: inset(0 0 100% 0);
+}
+/* the faint groove the line runs in */
+.tl-track::before {
+    content: ''; position: absolute; inset: 0; border-radius: 2px;
+    background: rgba(255, 255, 255, 0.07);
+}
+/* GSAP owns .tl-dot's transform (it rides the line's leading edge), so the
+   pulse lives on ::after where it can't fight for the same property. */
+.tl-dot {
+    position: absolute; top: 0; left: 50%;
+    width: 9px; height: 9px; margin: -4px 0 0 -4.5px;
+    opacity: 0;
+}
+.tl-dot::after {
+    content: ''; position: absolute; inset: 0;
+    border-radius: 50%; background: var(--teal);
+    box-shadow:
+        0 0 6px 1px var(--teal),
+        0 0 18px 5px rgba(45, 212, 191, 0.55),
+        0 0 46px 14px rgba(45, 212, 191, 0.22);
+}
+.tl-dot.lit { opacity: 1; }
+.tl-dot.lit::after { animation: tlPulse 1.6s ease-in-out infinite; }
+@keyframes tlPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.35); }
+}
+
+/* one node per entry, dark until the line reaches it */
+.tl-item { position: relative; }
+.tl-item::before {
+    content: ''; position: absolute; top: 36px; left: -27.5px;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--bg-band);
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
+    transition: background 0.45s var(--ease), box-shadow 0.45s var(--ease);
+}
+.tl-item.node-lit::before {
+    background: var(--teal);
+    box-shadow: inset 0 0 0 1.5px var(--teal), 0 0 12px 2px rgba(45, 212, 191, 0.5);
+}
 
 .tl-item h4 { font-size: 1.08rem; font-weight: 700; letter-spacing: -0.015em; margin: 8px 0 2px; }
 .tl-date { color: var(--teal); font-size: 0.72rem; }
@@ -895,7 +1006,7 @@ a { color: inherit; text-decoration: none; }
     background: rgba(255, 255, 255, 0.05);
     box-shadow: inset 0 0 0 1.5px var(--teal), 0 0 0 4px var(--teal-glow);
 }
-.form-status { min-height: 1.2em; font-size: 0.8rem; color: var(--mint); }
+.form-status { min-height: 1.2em; font-size: 0.8rem; color: var(--teal-soft); }
 .form-status.error { color: #f87171; }
 
 /* ============ Footer / terminal ============ */
@@ -935,7 +1046,7 @@ a { color: inherit; text-decoration: none; }
     white-space: pre-wrap; word-break: break-word;
 }
 .terminal-body .prompt { color: var(--teal); }
-.terminal-body .ok { color: var(--mint); }
+.terminal-body .ok { color: var(--teal-soft); }
 .terminal-body .cursor-block {
     display: inline-block; width: 8px; height: 1em;
     background: var(--teal); vertical-align: text-bottom;
@@ -976,32 +1087,196 @@ a { color: inherit; text-decoration: none; }
    Content stays visible by default so the page never breaks without JS. */
 
 
-/* ============ Preloader ============ */
-#preloader {
-    position: fixed; inset: 0; z-index: 400;
-    background: var(--bg);
+/* ============ Preloader ============
+   A light gate over the dark site. The pill is painted in --bg, so when it
+   stretches past the viewport edges it *becomes* the page - no crossfade,
+   no second element, the button itself hands you the site. */
+.loading-screen {
+    /* above the custom cursor (500/499) - this is a modal gate */
+    position: fixed; inset: 0; z-index: 600;
+    width: 100vw; height: 100vh; height: 100svh;
+    background: #eae5ec;
     display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
 }
-.pre-inner {
-    display: flex; flex-direction: column; align-items: center; gap: 14px;
+body.pre-lock { overflow: hidden; }
+
+/* ---- header: name left, the little game right ---- */
+.loading-header {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    z-index: 12; width: calc(100% - 30px); max-width: 1920px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 20px 0; color: var(--bg); box-sizing: border-box;
 }
-.pre-brand { font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; }
-.pre-accent { color: var(--text-faint); font-weight: 400; }
-.pre-word { transform: rotate(-1.5deg); }
-.pre-count {
-    position: absolute; right: 5vw; bottom: 6vh;
-    font-family: var(--font-display);
-    color: var(--text); font-size: clamp(3.4rem, 9vw, 6.5rem);
-    font-weight: 800; line-height: 1;
-    opacity: 0.9;
+.loader-title { font-weight: 700; font-size: 14px; letter-spacing: 0.2px; }
+
+.loaderGame-container {
+    width: 200px; height: 100px; overflow: hidden; position: relative;
+    transform: scale(0.4); transform-origin: top right;
 }
-.pre-bar {
-    position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
-    background: rgba(255, 255, 255, 0.06);
+.loaderGame-in {
+    width: 1200px; position: absolute; left: 0; overflow: hidden;
+    animation: loaderGame 7s linear infinite;
 }
-.pre-bar i {
-    display: block; height: 100%; width: 0;
-    background: linear-gradient(90deg, var(--teal), var(--cyan));
+.loaderGame-line {
+    float: left; margin: 0 20px 40px; position: relative;
+    width: 10px; height: 60px; background: var(--bg); display: block;
+}
+.loaderGame-line:nth-child(2n) { margin-top: 40px; margin-bottom: 0; }
+.loaderGame-ball {
+    position: absolute; left: 20%; top: 0;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: var(--teal);
+    transform: translateY(10px);
+    animation: ball25 7s infinite;
+    animation-timing-function: cubic-bezier(0.3, 1.18, 0.63, 1.28);
+}
+@keyframes loaderGame { 0% { transform: translateX(0); } 100% { transform: translateX(-300px); } }
+@keyframes ball25 {
+    0%   { transform: translateY(70px); }
+    15%  { transform: translateY(10px); }
+    30%  { transform: translateY(70px); }
+    45%  { transform: translateY(10px); }
+    67%  { transform: translateY(70px); }
+    80%  { transform: translateY(10px); }
+    90%  { transform: translateY(70px); }
+    100% { transform: translateY(70px); }
+}
+
+/* ---- the marquee running behind the pill ---- */
+.loading-marquee {
+    position: absolute; top: 50%; left: 0; width: 100%;
+    transform: translateY(-50%);
+    color: var(--bg); font-size: 60px; font-weight: 700;
+    letter-spacing: -0.02em; text-transform: uppercase;
+    white-space: nowrap; overflow: hidden; z-index: 1;
+}
+.loading-marquee-track {
+    display: inline-flex; align-items: center;
+    animation: loadMarquee 26s linear infinite;
+    will-change: transform;
+}
+.loading-marquee span { padding: 0 50px; position: relative; }
+.loading-marquee span::before {
+    content: ''; position: absolute; left: 0; top: 50%;
+    width: 20px; height: 20px; border-radius: 50px;
+    background: var(--bg); transform: translate(-50%, -50%);
+}
+/* the track holds the list twice, so -50% lands on an identical frame */
+@keyframes loadMarquee { to { transform: translateX(-50%); } }
+
+/* ---- the pill ---- */
+.loading-wrap {
+    /* fixed so the pill does not resize when "Loading 99" becomes "Welcome →";
+       wide enough that neither state clips against .loading-content2's overflow */
+    --Lsize: 168px;
+    position: relative; z-index: 9;
+    min-width: 0; min-height: 0;
+    padding: 6px; border-radius: 100px;
+    background: var(--bg); overflow: hidden;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.2);
+    display: flex; align-items: center; justify-content: center;
+    transition: min-width 0.8s ease-in-out, min-height 0.8s ease-in-out,
+                border-radius 0.8s ease-in-out, box-shadow 0.8s ease-in-out;
+    transition-delay: 0.2s;
+}
+/* click → the pill swallows the viewport and becomes the page */
+.loading-wrap.is-clicked {
+    transition-delay: 0ms;
+    transition-timing-function: cubic-bezier(0.33, 0.11, 1, 0.72);
+    min-width: calc(100vw + 5000px);
+    min-height: calc(100vh + 500px);
+    border-radius: 5000px;
+    box-shadow: none;
+}
+
+.loading-button {
+    position: relative; z-index: 9;
+    padding: 20px 50px; border: 0; border-radius: 100px;
+    background: var(--bg); color: #fff;
+    font-family: var(--font-body);
+    font-size: 18px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase;
+    overflow: hidden;
+    outline: none;
+}
+.loading-button:focus-visible { box-shadow: 0 0 0 2px var(--teal); }
+.loading-wrap.is-clicked .loading-button { box-shadow: none; }
+
+/* The custom cursor is built for the dark page and would sit on top of this
+   light one. Hiding it via CSS is not an option - the cursor script writes
+   opacity inline on every mousemove - so the gate simply outranks it
+   (see the z-index on .loading-screen) and restores the real pointer. */
+body.has-cursor .loading-screen, body.has-cursor .loading-screen * { cursor: default; }
+body.has-cursor .loading-wrap.is-ready .loading-button,
+.loading-wrap.is-ready .loading-button { cursor: pointer; }
+.loading-wrap.is-clicked .loading-button { overflow: visible; }
+
+/* The glow sits behind the opaque button, so all you ever see of it is the
+   6px rim of .loading-wrap catching light as it follows your pointer. */
+.loading-hover {
+    position: absolute; z-index: 0;
+    top: var(--my, 50%); left: var(--mx, 50%);
+    width: 250px; height: 120px; border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--teal); filter: blur(30px);
+    opacity: 0; transition: opacity 0.5s;
+    pointer-events: none;
+}
+.loading-wrap.is-ready:hover .loading-hover,
+.loading-wrap.is-ready:focus-within .loading-hover { opacity: 0.95; }
+/* Once expanding, the wrap dwarfs the button and the blob would be exposed.
+   The :hover variant has to be spelled out - without it the rule above wins
+   on specificity and the glow stays lit under your stationary pointer. */
+.loading-wrap.is-clicked .loading-hover,
+.loading-wrap.is-clicked:hover .loading-hover,
+.loading-wrap.is-clicked:focus-within .loading-hover { opacity: 0; transition: opacity 0.25s; }
+
+.loading-content {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; gap: 14px;
+}
+.loading-content2 {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    column-gap: 10px; text-align: center;
+    width: var(--Lsize); max-width: var(--Lsize);
+    transition: max-width 1s, opacity 0.5s;
+}
+.loading-num { font-weight: 300; opacity: 0.7; font-variant-numeric: tabular-nums; }
+.loading-wrap.is-ready .loading-num { display: none; }
+
+/* blinking block, steady once you're invited in */
+.loading-box {
+    flex: none; width: 15px; height: 25px; background: #fff;
+    animation: loadBlink 1s linear infinite;
+}
+@keyframes loadBlink { 0% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; } }
+.loading-wrap.is-ready .loading-box { animation: none; opacity: 1; }
+
+.loading-icon {
+    flex: none; width: 20px; height: 20px; color: var(--teal);
+    transform: scale(0); opacity: 0;
+    transition: transform 0.5s 0.5s, opacity 0.5s 0.5s;
+}
+.loading-wrap.is-ready .loading-icon { transform: scale(1); opacity: 1; }
+.loading-wrap.is-clicked .loading-icon { transition: 1s; transform: translateX(200px); }
+.loading-wrap.is-clicked .loading-content2 { opacity: 0; transition: 0.5s; }
+
+@media (min-width: 1400px) {
+    .loading-wrap { --Lsize: 210px; }
+    .loading-button { padding: 30px 70px; font-size: 25px; }
+    .loading-marquee { font-size: 100px; }
+    .loader-title { font-size: 18px; }
+    .loading-header { padding: 35px 0; }
+}
+@media (max-width: 640px) {
+    .loading-wrap { --Lsize: 142px; }
+    .loading-button { padding: 16px 32px; font-size: 15px; }
+    .loading-marquee { font-size: 34px; }
+    .loading-marquee span { padding: 0 28px; }
+    .loading-marquee span::before { width: 12px; height: 12px; }
+    .loading-box { width: 11px; height: 19px; }
 }
 
 /* ============ Custom cursor ============ */
@@ -1041,7 +1316,7 @@ html.lenis, html.lenis body { height: auto; }
     filter: drop-shadow(0 0 6px rgba(45, 212, 191, 0.45));
 }
 #kp-chart .kp-pred {
-    fill: none; stroke: var(--violet); stroke-width: 2;
+    fill: none; stroke: var(--data-alt); stroke-width: 2;
     stroke-linecap: round; stroke-linejoin: round;
     stroke-dasharray: 7 6;
     filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.4));

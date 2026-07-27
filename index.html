@@ -58,14 +58,50 @@
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Preloader -->
-    <div id="preloader" aria-hidden="true">
-        <div class="pre-inner">
-            <span class="pre-brand"><span class="brand-mark">◆</span> vedant<span class="pre-accent">.rajput</span></span>
-            <span class="pre-word scribble">warming up the gpus…</span>
+    <!-- ============ Preloader ============
+         A light gate over the dark site: a marquee of what I do runs behind a
+         pill that counts to 100, flips to "welcome", and on click stretches
+         out past the viewport to hand you the page. -->
+    <div class="loading-screen" id="preloader" role="dialog" aria-modal="true" aria-label="Intro">
+
+        <div class="loading-header">
+            <span class="loader-title">VedantRajput</span>
+            <!-- a ball hopping the bars while you wait -->
+            <div class="loaderGame-container" aria-hidden="true">
+                <div class="loaderGame-in">
+                    <i class="loaderGame-line"></i><i class="loaderGame-line"></i><i class="loaderGame-line"></i>
+                    <i class="loaderGame-line"></i><i class="loaderGame-line"></i><i class="loaderGame-line"></i>
+                    <i class="loaderGame-line"></i><i class="loaderGame-line"></i><i class="loaderGame-line"></i>
+                    <i class="loaderGame-line"></i><i class="loaderGame-line"></i><i class="loaderGame-line"></i>
+                    <span class="loaderGame-ball"></span>
+                </div>
+            </div>
         </div>
-        <span class="pre-count mono" id="pre-count">00</span>
-        <div class="pre-bar"><i id="pre-bar-fill"></i></div>
+
+        <div class="loading-marquee" aria-hidden="true">
+            <div class="loading-marquee-track">
+                <span>Data Scientist</span><span>Machine Learning</span><span>Deep Learning</span><span>MLOps</span><span>Retrieval Augmented Generation</span><span>Data Scientist</span><span>Machine Learning</span><span>Deep Learning</span><span>MLOps</span><span>Retrieval Augmented Generation</span>
+            </div>
+        </div>
+
+        <div class="loading-wrap" id="loading-wrap">
+            <!-- the glow lives behind the button, so it only shows through the
+                 6px rim of the wrapper - a lit edge, not a lit button -->
+            <span class="loading-hover" aria-hidden="true"></span>
+            <button class="loading-button" id="loading-button" type="button" disabled aria-live="polite">
+                <span class="loading-content">
+                    <i class="loading-box" aria-hidden="true"></i>
+                    <span class="loading-content2">
+                        <span class="loading-word" id="loading-word">Loading</span>
+                        <span class="loading-num" id="loading-num">0</span>
+                        <svg class="loading-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </span>
+            </button>
+        </div>
     </div>
 
     <!-- Custom cursor (fine pointers only) -->
@@ -102,6 +138,7 @@
                 <li><a href="#skills" class="nav-link">Skills</a></li>
                 <li><a href="#experience" class="nav-link">Experience</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><a href="play/" class="nav-link nav-play">Playground</a></li>
             </ul>
 
             <div class="nav-right">
@@ -207,7 +244,7 @@
                         <svg id="kp-chart" viewBox="0 0 860 320" preserveAspectRatio="none"></svg>
                         <div class="chart-legend mono">
                             <span><i class="lg lg-teal"></i>Actual NASA Kp</span>
-                            <span><i class="lg lg-violet"></i>Predicted Kp (AI)</span>
+                            <span><i class="lg lg-pred"></i>Predicted Kp (AI)</span>
                         </div>
                     </div>
 
@@ -454,6 +491,36 @@
                     <h2 class="section-title">The toolkit.</h2>
                 </div>
 
+                <!-- Tech pyramid: language at the apex, infrastructure at the base.
+                     Icons are self-hosted (Devicon, MIT) - no CDN on the critical path. -->
+                <div class="pyramid" id="pyramid">
+                    <div class="pyr-row">
+                        <a class="pyr-item" href="https://www.python.org" target="_blank" rel="noopener" data-name="Python"><img src="assets/icons/python.svg" alt="Python" width="48" height="48" loading="lazy"></a>
+                    </div>
+                    <div class="pyr-row">
+                        <a class="pyr-item" href="https://pytorch.org" target="_blank" rel="noopener" data-name="PyTorch"><img src="assets/icons/pytorch.svg" alt="PyTorch" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://www.tensorflow.org" target="_blank" rel="noopener" data-name="TensorFlow"><img src="assets/icons/tensorflow.svg" alt="TensorFlow" width="48" height="48" loading="lazy"></a>
+                    </div>
+                    <div class="pyr-row">
+                        <a class="pyr-item" href="https://scikit-learn.org" target="_blank" rel="noopener" data-name="scikit-learn"><img src="assets/icons/scikitlearn.svg" alt="scikit-learn" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://keras.io" target="_blank" rel="noopener" data-name="Keras"><img src="assets/icons/keras.svg" alt="Keras" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://opencv.org" target="_blank" rel="noopener" data-name="OpenCV"><img src="assets/icons/opencv.svg" alt="OpenCV" width="48" height="48" loading="lazy"></a>
+                    </div>
+                    <div class="pyr-row">
+                        <a class="pyr-item" href="https://pandas.pydata.org" target="_blank" rel="noopener" data-name="pandas"><img src="assets/icons/pandas.svg" alt="pandas" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://numpy.org" target="_blank" rel="noopener" data-name="NumPy"><img src="assets/icons/numpy.svg" alt="NumPy" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://www.postgresql.org" target="_blank" rel="noopener" data-name="PostgreSQL"><img src="assets/icons/postgresql.svg" alt="PostgreSQL" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://jupyter.org" target="_blank" rel="noopener" data-name="Jupyter"><img src="assets/icons/jupyter.svg" alt="Jupyter" width="48" height="48" loading="lazy"></a>
+                    </div>
+                    <div class="pyr-row">
+                        <a class="pyr-item" href="https://www.docker.com" target="_blank" rel="noopener" data-name="Docker"><img src="assets/icons/docker.svg" alt="Docker" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://aws.amazon.com" target="_blank" rel="noopener" data-name="AWS"><img src="assets/icons/aws.svg" alt="AWS" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://airflow.apache.org" target="_blank" rel="noopener" data-name="Airflow"><img src="assets/icons/airflow.svg" alt="Apache Airflow" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://fastapi.tiangolo.com" target="_blank" rel="noopener" data-name="FastAPI"><img src="assets/icons/fastapi.svg" alt="FastAPI" width="48" height="48" loading="lazy"></a>
+                        <a class="pyr-item" href="https://git-scm.com" target="_blank" rel="noopener" data-name="Git"><img src="assets/icons/git.svg" alt="Git" width="48" height="48" loading="lazy"></a>
+                    </div>
+                </div>
+
                 <div class="bento">
                     <article class="card stagger">
                         <h3 class="card-title">Languages &amp; Data</h3>
@@ -508,6 +575,9 @@
                         <h3 class="col-title mono">// experience</h3>
 
                         <div class="timeline">
+                            <div class="tl-track" aria-hidden="true">
+                                <i class="tl-line"></i><i class="tl-dot"></i>
+                            </div>
                             <article class="tl-item card stagger">
                                 <span class="tl-date mono">Jan to Apr 2026</span>
                                 <h4>AI Engineer Intern</h4>
@@ -527,6 +597,9 @@
 
                         <h3 class="col-title mono">// education</h3>
                         <div class="timeline">
+                            <div class="tl-track" aria-hidden="true">
+                                <i class="tl-line"></i><i class="tl-dot"></i>
+                            </div>
                             <article class="tl-item card stagger">
                                 <span class="tl-date mono">2025 to 2027 · Paris</span>
                                 <h4>M.Sc. Data Science &amp; Analytics</h4>
