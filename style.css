@@ -1167,8 +1167,9 @@ body.pre-lock { overflow: hidden; }
 
 /* ---- the pill ---- */
 .loading-wrap {
-    /* fixed so the pill does not resize when "Loading 99" becomes "Welcome →";
-       wide enough that neither state clips against .loading-content2's overflow */
+    /* fixed so the pill keeps its shape when "Loading 99" gives way to the
+       arrow; wide enough that neither state clips against the overflow on
+       .loading-content2 */
     --Lsize: 168px;
     position: relative; z-index: 9;
     min-width: 0; min-height: 0;
@@ -1245,15 +1246,17 @@ body.has-cursor .loading-wrap .loading-button,
     transition: max-width 1s, opacity 0.5s;
 }
 .loading-num { font-weight: 300; opacity: 0.7; font-variant-numeric: tabular-nums; }
+/* the percentage drops away once it reaches 100; the word stays */
 .loading-wrap.is-ready .loading-num { display: none; }
 
-/* blinking block, steady once you're invited in */
+/* terminal caret - keeps blinking the whole time the gate is waiting on you */
 .loading-box {
     flex: none; width: 15px; height: 25px; background: #fff;
     animation: loadBlink 1s linear infinite;
 }
 @keyframes loadBlink { 0% { opacity: 0; } 25% { opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; } }
-.loading-wrap.is-ready .loading-box { animation: none; opacity: 1; }
+/* it only settles once you have committed and the pill starts expanding */
+.loading-wrap.is-clicked .loading-box { animation: none; opacity: 1; }
 
 .loading-icon {
     flex: none; width: 20px; height: 20px; color: var(--teal);

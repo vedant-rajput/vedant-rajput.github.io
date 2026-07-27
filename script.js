@@ -121,9 +121,10 @@ function scrambleTo(el, dur = 0.8) {
 
 /* ============================================================
    Preloader → click-to-enter → hero intro
-   A light gate over the dark site. The pill counts to 100, flips to
-   "Welcome", and on click stretches past every edge of the viewport -
-   it is painted in --bg, so the button literally becomes the page.
+   A light gate over the dark site. The pill counts to 100, drops its
+   label for a bobbing arrow, and on a scroll gesture stretches past
+   every edge of the viewport - it is painted in --bg, so the button
+   literally becomes the page.
    Tech: CSS transition on min-width/min-height (a scale() would warp
    the radius and the label), GSAP for the hero reveal underneath
    ============================================================ */
@@ -245,7 +246,7 @@ function scrambleTo(el, dur = 0.8) {
             num.textContent = Math.round(this.targets()[0].v);
         },
         onComplete() {
-            word.textContent = 'Scroll';
+            word.textContent = 'Welcome';
             button.disabled = false;
             wrap.classList.add('is-ready');
             button.focus({ preventScroll: true });
