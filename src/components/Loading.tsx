@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./styles/Loading.css";
 import { useLoading } from "../context/loadingContext";
 
@@ -9,19 +9,16 @@ const Loading = ({ percent }: { percent: number }) => {
   const [loaded, setLoaded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [clicked, setClicked] = useState(false);
+  const completedRef = useRef(false);
 
+  // Latch on the first time percent hits 100: once the reveal is scheduled,
+  // a stray lower write to the loading state must not cancel it, so no
+  // cleanup is returned on purpose.
   useEffect(() => {
-    if (percent < 100) return;
-    const completeTimer = setTimeout(() => {
-      setLoaded(true);
-    }, 600);
-    const revealTimer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 1600);
-    return () => {
-      clearTimeout(completeTimer);
-      clearTimeout(revealTimer);
-    };
+    if (percent < 100 || completedRef.current) return;
+    completedRef.current = true;
+    setTimeout(() => setLoaded(true), 600);
+    setTimeout(() => setIsLoaded(true), 1600);
   }, [percent]);
 
   useEffect(() => {

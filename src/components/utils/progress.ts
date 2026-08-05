@@ -24,6 +24,12 @@ export const setProgress = (setLoading: (value: number) => void) => {
     setLoading(100);
   }
 
+  // Stop ticking without touching the shared loading state — for when the
+  // owning component unmounts (e.g. StrictMode's throwaway first mount).
+  function cancel() {
+    clearInterval(interval);
+  }
+
   function loaded() {
     return new Promise<number>((resolve) => {
       clearInterval(interval);
@@ -38,5 +44,5 @@ export const setProgress = (setLoading: (value: number) => void) => {
       }, 2);
     });
   }
-  return { loaded, clear };
+  return { loaded, clear, cancel };
 };

@@ -147,6 +147,7 @@ const Scene = () => {
 
     return () => {
       disposed = true;
+      progress.cancel();
       cancelAnimationFrame(frameId);
       clearTimeout(debounce);
       clearTimeout(resizeTimer);
