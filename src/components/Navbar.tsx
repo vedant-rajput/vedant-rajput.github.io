@@ -4,10 +4,11 @@ import { MdOutlineMail } from "react-icons/md";
 import HoverLinks from "./HoverLinks";
 import { gsap } from "gsap";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { setSmoother, getSmoother } from "../lib/smoother";
+import { EMAIL } from "../data/constants";
 import "./styles/Navbar.css";
 
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
-export let smoother: ScrollSmoother;
 
 const navItems = [
   { id: "about", label: "ABOUT" },
@@ -37,35 +38,46 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    smoother = ScrollSmoother.create({
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    const smoother = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
-      smooth: 1.7,
-      speed: 1.7,
+      smooth: reduceMotion ? 0 : 1.7,
+      speed: reduceMotion ? 1 : 1.7,
       effects: true,
       autoResize: true,
       ignoreMobileResize: true,
     });
+    setSmoother(smoother);
 
     smoother.scrollTop(0);
     smoother.paused(true);
 
-    let links = document.querySelectorAll(".header ul a");
-    links.forEach((elem) => {
-      let element = elem as HTMLAnchorElement;
-      element.addEventListener("click", (e) => {
-        if (window.innerWidth > 1024) {
-          e.preventDefault();
-          let elem = e.currentTarget as HTMLAnchorElement;
-          let section = elem.getAttribute("data-href");
-          smoother.scrollTo(section, true, "top top");
-        }
-      });
-    });
-    window.addEventListener("resize", () => {
-      ScrollSmoother.refresh(true);
-    });
+    const onLinkClick = (e: Event) => {
+      if (window.innerWidth > 1024) {
+        e.preventDefault();
+        const elem = e.currentTarget as HTMLAnchorElement;
+        const section = elem.getAttribute("data-href");
+        getSmoother()?.scrollTo(section, true, "top top");
+      }
+    };
+    const links = document.querySelectorAll<HTMLAnchorElement>(".header ul a");
+    links.forEach((link) => link.addEventListener("click", onLinkClick));
+
+    const onResize = () => ScrollSmoother.refresh(true);
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      links.forEach((link) => link.removeEventListener("click", onLinkClick));
+      window.removeEventListener("resize", onResize);
+      smoother.kill();
+      setSmoother(null);
+    };
   }, []);
+
   return (
     <>
       <div className="header">
@@ -73,12 +85,12 @@ const Navbar = () => {
           VR
         </a>
         <a
-          href="mailto:vedantt.rajput@gmail.com"
+          href={`mailto:${EMAIL}`}
           className="navbar-connect glass-pill glass-pill-accent"
           data-cursor="disable"
         >
           <MdOutlineMail />
-          vedantt.rajput@gmail.com
+          {EMAIL}
         </a>
         <ul>
           {navItems.map(({ id, label }) => (

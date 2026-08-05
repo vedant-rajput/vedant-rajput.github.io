@@ -1,22 +1,29 @@
 import { FaGithub, FaLinkedinIn, FaEnvelope } from "react-icons/fa6";
 import "./styles/SocialIcons.css";
 import { TbNotes } from "react-icons/tb";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import HoverLinks from "./HoverLinks";
+import { EMAIL, GITHUB_URL, LINKEDIN_URL, RESUME_PATH } from "../data/constants";
 
 const SocialIcons = () => {
-  useEffect(() => {
-    const social = document.getElementById("social") as HTMLElement;
+  const socialRef = useRef<HTMLDivElement>(null);
 
-    social.querySelectorAll("span").forEach((item) => {
-      const elem = item as HTMLElement;
-      const link = elem.querySelector("a") as HTMLElement;
+  useEffect(() => {
+    const social = socialRef.current;
+    if (!social) return;
+
+    const cleanups: (() => void)[] = [];
+
+    social.querySelectorAll("span").forEach((elem) => {
+      const link = elem.querySelector("a");
+      if (!link) return;
 
       const rect = elem.getBoundingClientRect();
       let mouseX = rect.width / 2;
       let mouseY = rect.height / 2;
       let currentX = 0;
       let currentY = 0;
+      let frameId: number;
 
       const updatePosition = () => {
         currentX += (mouseX - currentX) * 0.1;
@@ -25,38 +32,48 @@ const SocialIcons = () => {
         link.style.setProperty("--siLeft", `${currentX}px`);
         link.style.setProperty("--siTop", `${currentY}px`);
 
-        requestAnimationFrame(updatePosition);
+        frameId = requestAnimationFrame(updatePosition);
       };
 
       const onMouseMove = (e: MouseEvent) => {
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const bounds = elem.getBoundingClientRect();
+        const x = e.clientX - bounds.left;
+        const y = e.clientY - bounds.top;
 
         if (x < 40 && x > 10 && y < 40 && y > 5) {
           mouseX = x;
           mouseY = y;
         } else {
-          mouseX = rect.width / 2;
-          mouseY = rect.height / 2;
+          mouseX = bounds.width / 2;
+          mouseY = bounds.height / 2;
         }
       };
 
       document.addEventListener("mousemove", onMouseMove);
+      frameId = requestAnimationFrame(updatePosition);
 
-      updatePosition();
-
-      return () => {
-        elem.removeEventListener("mousemove", onMouseMove);
-      };
+      cleanups.push(() => {
+        cancelAnimationFrame(frameId);
+        document.removeEventListener("mousemove", onMouseMove);
+      });
     });
+
+    return () => {
+      cleanups.forEach((cleanup) => cleanup());
+    };
   }, []);
 
   return (
     <div className="icons-section">
-      <div className="social-icons" data-cursor="icons" id="social">
+      <div
+        className="social-icons"
+        data-cursor="icons"
+        id="social"
+        ref={socialRef}
+      >
         <span>
           <a
-            href="https://github.com/vedant-rajput"
+            href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
@@ -66,7 +83,7 @@ const SocialIcons = () => {
         </span>
         <span>
           <a
-            href="https://www.linkedin.com/in/vedant-rajputt/"
+            href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
@@ -75,14 +92,14 @@ const SocialIcons = () => {
           </a>
         </span>
         <span>
-          <a href="mailto:vedantt.rajput@gmail.com" aria-label="Email">
+          <a href={`mailto:${EMAIL}`} aria-label="Email">
             <FaEnvelope />
           </a>
         </span>
       </div>
       <a
         className="resume-button"
-        href="/Vedant_Rajput_Resume.pdf"
+        href={RESUME_PATH}
         target="_blank"
         rel="noopener noreferrer"
       >

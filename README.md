@@ -15,7 +15,7 @@ Seeking a 6-month AI & ML internship from July 2026.
 
 ## Features
 
-- **3D character** — a Draco-compressed, AES-encrypted GLB rendered in raw Three.js, with
+- **3D character** — a Draco-compressed GLB rendered in raw Three.js, with
   head tracking that follows the cursor and idle/typing/blink animation blending
 - **Scroll choreography** — GSAP ScrollSmoother + ScrollTrigger timelines drive the camera,
   character rotation and section reveals as you scroll
@@ -37,8 +37,8 @@ Seeking a 6-month AI & ML internship from July 2026.
 Requires Node 18+.
 
 ```bash
-git clone https://github.com/vedant-rajput/dynamic-portfolio.git
-cd dynamic-portfolio
+git clone https://github.com/vedant-rajput/vedant.rajput.git
+cd vedant.rajput
 npm install
 npm run dev
 ```
@@ -53,22 +53,20 @@ reachable from other devices on your network — handy for checking the mobile l
 | `npm run preview` | Serve the production build locally |
 | `npm run lint` | ESLint |
 
-> **First load takes a moment.** The loading screen waits on the 3D character to fetch,
-> decrypt and compile its shaders. On a machine without GPU acceleration this can take
-> a while.
+> **First load takes a moment.** The loading screen waits on the 3D character to fetch
+> and compile its shaders. On a machine without GPU acceleration this can take a while.
 
 ## Deploying
 
-⚠️ **This will not run on a real domain as-is.** The project imports `ScrollSmoother` and
-`SplitText` from `gsap-trial`. Those are GSAP Club plugins, and the trial build refuses to
-run anywhere other than `localhost`.
+The site is a static Vite build — deploy `dist/` anywhere (Vercel, Netlify, GitHub
+Pages). `ScrollSmoother` and `SplitText` ship free with GSAP 3.13+, so no Club
+membership or plugin swap is needed.
 
-To deploy, get a [GSAP Club membership](https://gsap.com/docs/v3/Installation/), install
-the real plugins, and change the imports in:
+```bash
+npm run build   # outputs to dist/
+```
 
-- `src/components/Navbar.tsx`
-- `src/components/utils/initialFX.ts`
-- `src/components/utils/splitText.ts`
+CI (`.github/workflows/ci.yml`) runs lint + build on every push and pull request.
 
 ## Project structure
 
@@ -76,15 +74,15 @@ the real plugins, and change the imports in:
 public/
   draco/          Draco decoder for the compressed model
   images/         Tech-stack sphere textures + project cards
-  models/         Encrypted character (.enc) and HDR environment
+  models/         Character model (.glb) and HDR environment
 src/
   components/     Sections — Landing, About, WhatIDo, Career, Work, TechStack, Contact
     Character/    Three.js scene, lighting, animation and mouse utilities
     styles/       Per-component CSS
     utils/        GSAP scroll timelines, intro effects, text splitting
   context/        Loading provider
-  data/           Bone name maps for animation filtering
-  types/          Ambient declarations for untyped gsap-trial plugins
+  data/           Project list, contact constants, bone name maps
+  lib/            ScrollSmoother instance store
 ```
 
 ## Credits

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
+/* Geist is loaded via <link> in index.html (preconnect + stylesheet). */
 
 :root {
   font-family: "Geist", sans-serif;

@@ -5,6 +5,10 @@
   position: relative;
   z-index: 2;
   background-color: var(--backgroundColor);
+  /* Recruiters need to be able to copy the email/phone. */
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
 }
 
 .contact-section h3 {

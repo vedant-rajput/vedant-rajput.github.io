@@ -1,5 +1,13 @@
 import { MdArrowOutward, MdCopyright } from "react-icons/md";
 import "./styles/Contact.css";
+import {
+  EMAIL,
+  PHONE,
+  PHONE_HREF,
+  GITHUB_URL,
+  LINKEDIN_URL,
+  RESUME_PATH,
+} from "../data/constants";
 
 const Contact = () => {
   return (
@@ -10,14 +18,14 @@ const Contact = () => {
           <div className="contact-box">
             <h4>Email</h4>
             <p>
-              <a href="mailto:vedantt.rajput@gmail.com" data-cursor="disable">
-                vedantt.rajput@gmail.com
+              <a href={`mailto:${EMAIL}`} data-cursor="disable">
+                {EMAIL}
               </a>
             </p>
             <h4>Phone</h4>
             <p>
-              <a href="tel:+33626477886" data-cursor="disable">
-                +33 6 26 47 78 86
+              <a href={PHONE_HREF} data-cursor="disable">
+                {PHONE}
               </a>
             </p>
             <h4>Location</h4>
@@ -28,7 +36,7 @@ const Contact = () => {
           <div className="contact-box">
             <h4>Social</h4>
             <a
-              href="https://github.com/vedant-rajput"
+              href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
               data-cursor="disable"
@@ -37,7 +45,7 @@ const Contact = () => {
               Github <MdArrowOutward />
             </a>
             <a
-              href="https://www.linkedin.com/in/vedant-rajputt/"
+              href={LINKEDIN_URL}
               target="_blank"
               rel="noopener noreferrer"
               data-cursor="disable"
@@ -46,7 +54,7 @@ const Contact = () => {
               Linkedin <MdArrowOutward />
             </a>
             <a
-              href="/Vedant_Rajput_Resume.pdf"
+              href={RESUME_PATH}
               target="_blank"
               rel="noopener noreferrer"
               data-cursor="disable"
